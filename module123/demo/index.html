@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="基于 MCP 的自动化文献总结与公众号内容生成流水线项目演示">
   <title>知流 · 自动化文献内容流水线</title>
-  <link rel="stylesheet" href="styles.css?v=20260615-module2-formal">
+  <link rel="stylesheet" href="styles.css?v=20260615-all-modules">
 </head>
 <body>
   <header class="site-header">
@@ -182,27 +182,49 @@
               <i>→</i>
               <div><b>05</b><strong>LLM 判断</strong><small>相关性、价值与额外要求</small></div>
             </div>
-            <div class="module-data">
-              <div><span>输入</span><strong>query / select_top_n / extra_query</strong></div>
-              <div><span>核心代码</span><strong>run_pipeline() · _search_arxiv() · _llm_check_paper()</strong></div>
-              <div><span>输出</span><strong>papers/*.json · checked.json · quick_result.md</strong></div>
+            <div class="module-output">
+              <div><span>任务输入</span><strong>研究关键词、附加筛选要求、目标篇数</strong></div>
+              <div><span>过程记录</span><strong>浏览数量、跳过原因、模型判断理由</strong></div>
+              <div><span>模块产出</span><strong>入选论文 JSON、已检查论文索引、检索摘要</strong></div>
             </div>
           </div>
         </div>
         <div class="module-page module-page-alt page-shell">
           <div class="module-subheading reveal">
-            <span>WHY THIS DESIGN</span>
-            <h3>筛选成本集中在真正需要语义理解的论文上</h3>
+            <span>SCREENING STRATEGY</span>
+            <h3>规则筛选与语义判断组成两级筛选漏斗</h3>
           </div>
-          <div class="module-insights">
-            <article class="reveal"><span>日期过滤</span><p>根据 arXiv ID 的年月前缀限制近期论文，避免旧结果进入模型判断阶段。</p></article>
-            <article class="reveal"><span>双重去重</span><p>分别记录已保存论文和已检查论文，重复候选无需再次调用模型。</p></article>
-            <article class="reveal"><span>受控调用</span><p>浏览数量、LLM 调用次数和目标保存篇数都有上限，保证一次任务成本可预测。</p></article>
-            <article class="reveal"><span>筛选可解释</span><p>模型返回匹配结论和原因，论文 JSON 同时保存标题、摘要、作者、链接和检索主题。</p></article>
+          <div class="strategy-layout">
+            <div class="screening-funnel reveal">
+              <div><span>ARXIV RESULTS</span><strong>关键词检索结果</strong><small>按相关性排序并逐页读取</small></div>
+              <i></i>
+              <div><span>RULE FILTER</span><strong>日期与重复项过滤</strong><small>近期月份 · 已保存 · 已检查</small></div>
+              <i></i>
+              <div><span>SEMANTIC FILTER</span><strong>大模型价值判断</strong><small>主题相关性 · 研究价值 · 附加要求</small></div>
+              <i></i>
+              <div><span>SELECTED SET</span><strong>候选论文集合</strong><small>保留判断理由与完整元数据</small></div>
+            </div>
+            <div class="artifact-panel reveal">
+              <span>SELECTED PAPER RECORD</span>
+              <strong>标准化论文记录</strong>
+              <dl>
+                <div><dt>论文标识</dt><dd>2606.12843</dd></div>
+                <div><dt>检索主题</dt><dd>financial machine learning</dd></div>
+                <div><dt>来源链接</dt><dd>arXiv 页面与 PDF</dd></div>
+                <div><dt>筛选依据</dt><dd>标题、摘要与附加要求</dd></div>
+                <div><dt>后续用途</dt><dd>作为模块 2 的标准输入</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="quality-assurance">
+            <article><span>CONTROL 01</span><h4>时间范围明确</h4><p>根据 arXiv ID 的年月前缀筛选近期论文，搜索结果不会无限向旧论文扩展。</p><strong>停止条件：当前页均超出时间范围</strong></article>
+            <article><span>CONTROL 02</span><h4>重复调用受控</h4><p>分别记录已保存和已检查论文，未匹配论文也不会在下一次任务中重复调用模型。</p><strong>验证依据：saved IDs 与 checked.json</strong></article>
+            <article><span>CONTROL 03</span><h4>任务成本可控</h4><p>浏览数量、模型调用次数和目标保存篇数均设置上限，满足任一条件即结束任务。</p><strong>默认上限：浏览 30 条、模型判断 5 次</strong></article>
+            <article><span>CONTROL 04</span><h4>筛选结果可解释</h4><p>模型同时返回匹配结论和判断理由，便于人工复核论文是否符合选题要求。</p><strong>模块产出：候选论文及其筛选依据</strong></article>
           </div>
           <div class="module-value reveal">
-            <strong>实际意义</strong>
-            <p>研究者无需逐条打开搜索结果，先获得规模较小、理由明确的候选论文集合，再进行人工深读。</p>
+            <strong>模块产出</strong>
+            <p>从大规模检索结果中形成数量有限、主题相关且理由明确的候选论文集合，为后续全文解析与内容生成提供标准化输入。</p>
           </div>
         </div>
       </article>
@@ -259,36 +281,30 @@
             <div><b>06</b><strong>程序组装 Markdown</strong><small>插入图片并写入 front matter 与来源信息</small></div>
           </div>
 
-          <div class="processing-architecture reveal">
+          <div class="quality-assurance reveal">
             <article>
-              <span>STAGE A · EVIDENCE ACQUISITION</span>
-              <h4>多源证据采集</h4>
-              <p>将搜索结果中的论文元数据与 arXiv 完整摘要、PDF 正文和版面对象合并，统一形成论文级输入。</p>
-              <dl>
-                <div><dt>元数据</dt><dd>标题、作者、时间、检索主题</dd></div>
-                <div><dt>文本证据</dt><dd>完整摘要、正文摘录</dd></div>
-                <div><dt>视觉证据</dt><dd>Figure、Table、页码、原始图注</dd></div>
-              </dl>
+              <span>QUALITY 01</span>
+              <h4>输入完整性</h4>
+              <p>对搜索页摘要进行完整性检查，缺失时使用 arXiv ID 获取正式摘要，避免截断信息进入总结阶段。</p>
+              <strong>验证依据：摘要来源与补全状态</strong>
             </article>
             <article>
-              <span>STAGE B · GROUNDED GENERATION</span>
-              <h4>证据约束生成</h4>
-              <p>模型接收已编号的图表清单和论文文本，并按照固定内容模式生成文章，避免自由格式输出影响后续处理。</p>
-              <dl>
-                <div><dt>内容结构</dt><dd>标题、导语、方法、实验、总结</dd></div>
-                <div><dt>图文关联</dt><dd>image_slot 对应已提取图表</dd></div>
-                <div><dt>输出格式</dt><dd>可校验的结构化 JSON</dd></div>
-              </dl>
+              <span>QUALITY 02</span>
+              <h4>内容忠实性</h4>
+              <p>模型输入包含论文正文摘录和已编号图表，文章中的图片引用只能指向证据包内的真实资源。</p>
+              <strong>验证依据：image_slot、原始图注与 PDF 页码</strong>
             </article>
             <article>
-              <span>STAGE C · DETERMINISTIC ASSEMBLY</span>
-              <h4>确定性文章组装</h4>
-              <p>程序依据结构化结果插入图片、图注和来源链接，并在 Markdown 头部保存完整溯源信息。</p>
-              <dl>
-                <div><dt>文章正文</dt><dd>公众号风格 Markdown</dd></div>
-                <div><dt>媒体资源</dt><dd>独立 Figure / Table PNG</dd></div>
-                <div><dt>溯源字段</dt><dd>arXiv ID、PDF、源 JSON、生成时间</dd></div>
-              </dl>
+              <span>QUALITY 03</span>
+              <h4>格式稳定性</h4>
+              <p>大模型输出固定字段的 JSON，章节顺序、图片插入和 Markdown 生成由程序控制，降低自由文本解析失败。</p>
+              <strong>验证依据：JSON 字段校验与 Markdown 预览</strong>
+            </article>
+            <article>
+              <span>QUALITY 04</span>
+              <h4>结果可追溯</h4>
+              <p>文章保留论文标识、PDF 链接、源数据路径、配图清单和生成时间，可定位每项内容的来源。</p>
+              <strong>验证依据：front matter 与独立中间产物</strong>
             </article>
           </div>
         </div>
@@ -305,7 +321,17 @@
                 <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/figure_1.png" alt="从真实论文 PDF 中提取的方法流程图">
                 <span>IMAGE BLOCK BOUNDARY</span>
               </div>
-              <figcaption><b>Figure 提取</b><span>寻找标题上方最近的 PDF 图片块，以对象边界作为裁剪区域，避免按固定高度截入正文。</span></figcaption>
+              <figcaption>
+                <b>Figure 提取</b>
+                <span>寻找标题上方最近的 PDF 图片块，以对象边界作为裁剪区域，避免按固定高度截入正文。</span>
+                <dl class="extraction-details">
+                  <div><dt>定位信号</dt><dd>标题坐标 + type=1 图片块</dd></div>
+                  <div><dt>选择策略</dt><dd>取标题上方底边距离最近的图片对象</dd></div>
+                  <div><dt>边界修正</dt><dd>四周保留 4px，底边不越过标题</dd></div>
+                  <div><dt>回退方案</dt><dd>无图片块时使用页边距与标题位置估算</dd></div>
+                  <div><dt>输出记录</dt><dd>编号、页码、原始图注、相对路径</dd></div>
+                </dl>
+              </figcaption>
             </figure>
 
             <div class="crop-method">
@@ -329,34 +355,47 @@
                 <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/table_10.png" alt="从真实论文 PDF 中提取的实验结果表格">
                 <span>RULING-LINE CLUSTER</span>
               </div>
-              <figcaption><b>Table 提取</b><span>利用表格横线簇确定上下边界，并保留紧邻的 Note 行，减少论文段落混入。</span></figcaption>
+              <figcaption>
+                <b>Table 提取</b>
+                <span>利用表格横线簇确定上下边界，并保留紧邻的 Note 行，减少论文段落混入。</span>
+                <dl class="extraction-details">
+                  <div><dt>定位信号</dt><dd>标题坐标 + PDF 矢量横线</dd></div>
+                  <div><dt>聚类规则</dt><dd>连续横线间距不超过 72pt</dd></div>
+                  <div><dt>边界修正</dt><dd>以下一标题和页面底部限制最大范围</dd></div>
+                  <div><dt>内容保留</dt><dd>自动纳入紧邻表格的 Note 行</dd></div>
+                  <div><dt>回退方案</dt><dd>按文本间距、章节标题与正文特征判断</dd></div>
+                </dl>
+              </figcaption>
             </figure>
           </div>
 
           <div class="module-two-claims">
             <article class="reveal">
-              <span>创新 01</span>
-              <h4>从“提取图片”升级为版面感知裁剪</h4>
-              <p>兼容位图 Figure、矢量 Table 和无内嵌图片对象的 PDF。裁剪依据来自页面真实几何结构，因此比固定区域截图更精确。</p>
-              <strong>解决：裁到论文正文、漏掉表格边界、相邻图表混入</strong>
+              <span>METHOD COMPARISON</span>
+              <h4>相较常规提取方式</h4>
+              <dl class="claim-comparison">
+                <div><dt>固定区域截图</dt><dd>无法适应图表高度变化</dd></div>
+                <div><dt>仅提取内嵌图片</dt><dd>容易遗漏矢量表格与组合图形</dd></div>
+                <div><dt>本项目方案</dt><dd>依据标题、页面对象与相邻边界动态定位</dd></div>
+              </dl>
             </article>
             <article class="reveal">
-              <span>创新 02</span>
-              <h4>让模型只在证据包内组织内容</h4>
-              <p>提示词显式传入论文元数据、正文摘录和图表清单，并要求以 image_slot 引用已有图片，章节与图注采用结构化 JSON 输出。</p>
-              <strong>解决：内容无依据扩写、图文关系不稳定、格式难以解析</strong>
+              <span>VERIFICATION</span>
+              <h4>结果如何检查</h4>
+              <p>每张图片独立保存，并同步记录类型、编号、PDF 页码、原始图注和相对路径。生成文章通过 image_slot 引用对应资源。</p>
+              <strong>可逐张核对裁剪结果，也可从文章回溯至论文原页</strong>
             </article>
             <article class="reveal">
-              <span>创新 03</span>
-              <h4>Markdown 同时承担文章与数据契约</h4>
-              <p>front matter 保存 arXiv ID、PDF 链接、源 JSON、生成时间和全部配图信息，正文则保持公众号可读结构。</p>
-              <strong>解决：生成结果无法追溯、后续模块缺少稳定输入</strong>
+              <span>APPLICABILITY</span>
+              <h4>适用范围与处理边界</h4>
+              <p>对具有标准 Figure/Table 标题的学术 PDF 效果稳定。扫描版论文、标题格式异常或高度复杂的跨页表格可能无法准确定位。</p>
+              <strong>异常区域会被过滤，保留人工复核与局部重做入口</strong>
             </article>
           </div>
 
           <div class="module-value module-two-value reveal">
-            <strong>技术路径的核心价值</strong>
-            <p>模型负责理解与改写，确定性程序负责来源补全、版面计算、格式组装和路径记录。两类能力各自处理擅长的问题，使生成文章既有可读性，也能回溯到论文原文和具体图表。</p>
+            <strong>模块产出</strong>
+            <p>将一篇原始论文转换为结构化 Markdown 文章，并同步输出正文摘录、独立图表、原始图注和论文来源，为后续排版与发布提供可直接使用的内容素材。</p>
           </div>
         </div>
       </article>
@@ -382,34 +421,39 @@
               <i>→</i>
               <div><b>05</b><strong>草稿 / 发布</strong><small>draft/add 与 freepublish</small></div>
             </div>
-            <div class="module-data">
-              <div><span>输入</span><strong>summaries/*.md · summaries/images/*</strong></div>
-              <div><span>核心代码</span><strong>markdown_to_wechat_html() · render_preview_html() · upload_markdown_to_draft()</strong></div>
-              <div><span>输出</span><strong>wechat_articles/*.preview.html · published.json</strong></div>
+            <div class="module-output">
+              <div><span>任务输入</span><strong>Markdown 正文、封面与论文配图</strong></div>
+              <div><span>平台适配</span><strong>内联样式 HTML、素材 URL、封面 media_id</strong></div>
+              <div><span>模块产出</span><strong>本地预览、微信草稿与发布记录</strong></div>
             </div>
           </div>
         </div>
         <div class="module-page module-page-alt page-shell">
           <div class="module-subheading reveal">
-            <span>MCP TOOL LAYER</span>
-            <h3>发布能力以五个标准工具提供给编排层</h3>
+            <span>PLATFORM ADAPTATION</span>
+            <h3>内容转换、素材处理与发布操作分层执行</h3>
           </div>
-          <div class="tool-route reveal">
-            <code>list_wechat_markdown</code>
-            <code>preview_wechat_article</code>
-            <code>create_wechat_draft</code>
-            <code>publish_wechat_article</code>
-            <code>publish_latest_wechat_articles</code>
+          <div class="delivery-architecture reveal">
+            <article><span>CONTENT LAYER</span><h4>Markdown 语义转换</h4><p>识别标题、段落、引用、列表、链接和图片，并转换为微信公众号支持的内联样式 HTML。</p><strong>保持文章层级与移动端阅读节奏</strong></article>
+            <article><span>MEDIA LAYER</span><h4>图片与封面适配</h4><p>本地图片上传后替换为微信素材 URL，封面单独转换为草稿接口要求的 thumb_media_id。</p><strong>解决本地路径无法被微信正文访问的问题</strong></article>
+            <article><span>DELIVERY LAYER</span><h4>预览、草稿与发布</h4><p>默认先生成本地预览；审核通过后再创建草稿，并根据参数决定是否提交正式发布。</p><strong>高风险操作保留显式开关</strong></article>
           </div>
-          <div class="module-insights">
-            <article class="reveal"><span>预览优先</span><p>默认生成本地 HTML，先检查标题、图片和移动端排版，再决定是否上传。</p></article>
-            <article class="reveal"><span>素材适配</span><p>本地图片上传后替换为微信 URL，封面转换为草稿接口要求的 thumb_media_id。</p></article>
-            <article class="reveal"><span>权限隔离</span><p>本地预览无需公众号权限；真实草稿和发布才读取 AppID、Secret 与白名单配置。</p></article>
-            <article class="reveal"><span>统一调用</span><p>命令行、MCP Client 和模块5可以复用同一套核心函数，避免维护多份发布逻辑。</p></article>
+          <div class="mcp-capability reveal">
+            <div><span>MCP 能力 01</span><strong>列出可发布文章</strong></div>
+            <div><span>MCP 能力 02</span><strong>生成本地预览</strong></div>
+            <div><span>MCP 能力 03</span><strong>创建微信草稿</strong></div>
+            <div><span>MCP 能力 04</span><strong>提交文章发布</strong></div>
+            <div><span>MCP 能力 05</span><strong>批量处理最新文章</strong></div>
+          </div>
+          <div class="quality-assurance">
+            <article><span>SAFETY 01</span><h4>预览优先</h4><p>本地预览不调用微信接口，可先检查标题、图片、引用和移动端版式。</p><strong>默认状态：dry_run</strong></article>
+            <article><span>SAFETY 02</span><h4>权限隔离</h4><p>只有创建草稿或发布时才读取公众号凭证并请求外部平台。</p><strong>本地排版不依赖公众号权限</strong></article>
+            <article><span>SAFETY 03</span><h4>操作可追踪</h4><p>预览路径、草稿 media_id、发布状态和生成时间写入发布索引。</p><strong>验证依据：published.json</strong></article>
+            <article><span>SAFETY 04</span><h4>接口可复用</h4><p>命令行、MCP Client 与总编排模块复用同一套转换和发布逻辑。</p><strong>减少不同入口之间的行为差异</strong></article>
           </div>
           <div class="module-value reveal">
-            <strong>实际意义</strong>
-            <p>内容生成与平台发布形成清晰边界，发布操作可以预览、审核和复用，降低误发与接口变更带来的风险。</p>
+            <strong>模块产出</strong>
+            <p>将结构化 Markdown 转换为微信公众号可用的图文内容，并提供本地预览、草稿创建和受控发布三种交付方式。</p>
           </div>
         </div>
       </article>
@@ -435,27 +479,32 @@
               <i>→</i>
               <div><b>05</b><strong>叠加文字</strong><small>Pillow 排版标题与关键词</small></div>
             </div>
-            <div class="module-data">
-              <div><span>输入</span><strong>Markdown front matter · article body</strong></div>
-              <div><span>核心代码</span><strong>generate_cover_for_markdown() · enrich_cover_context() · _render_text_overlay()</strong></div>
-              <div><span>输出</span><strong>cover_bg.png · cover.png · covers.json</strong></div>
+            <div class="module-output">
+              <div><span>任务输入</span><strong>文章标题、副标题、关键词与正文摘要</strong></div>
+              <div><span>生成策略</span><strong>主题背景生成 + 本地文字排版</strong></div>
+              <div><span>模块产出</span><strong>无字背景、最终封面与生成记录</strong></div>
             </div>
           </div>
         </div>
         <div class="module-page module-page-alt page-shell">
           <div class="module-subheading reveal">
-            <span>VISUAL RELIABILITY</span>
-            <h3>背景生成与文字排版分别处理</h3>
+            <span>COVER COMPOSITION</span>
+            <h3>生成式背景与确定性文字排版分别处理</h3>
           </div>
-          <div class="module-insights">
-            <article class="reveal"><span>主题匹配</span><p>根据 RAG、金融、地理等语义选择视觉主题，并从文章提取更具体的画面线索。</p></article>
-            <article class="reveal"><span>文字准确</span><p>生图提示词要求无文字背景，中文标题由本地字体绘制，避免乱码和错字。</p></article>
-            <article class="reveal"><span>多级降级</span><p>优先使用配置的生图 API，网络或服务失败时生成本地主题渐变背景。</p></article>
-            <article class="reveal"><span>局部重做</span><p>背景和最终封面分开保存，文字样式调整时无需再次调用生图 API。</p></article>
+          <div class="cover-comparison reveal">
+            <figure><span>BACKGROUND</span><img src="runs/20260614-161344-9eb0e8/summaries/images/2606_12843/cover_bg.png" alt="AI 生成的无文字封面背景"><figcaption>生图服务只负责主题、构图与色彩，不生成标题文字。</figcaption></figure>
+            <div class="composition-rule"><span>COMPOSITION</span><h4>分层合成</h4><div><b>主题识别</b><p>从文章内容判断研究方向和视觉元素。</p></div><div><b>背景生成</b><p>提示词明确禁止文字、标识和水印。</p></div><div><b>文字叠加</b><p>使用本地字体绘制标题、副标题和关键词。</p></div><div><b>版式校验</b><p>控制换行、字号、留白与文字对比度。</p></div></div>
+            <figure><span>FINAL COVER</span><img src="runs/20260614-161344-9eb0e8/summaries/images/2606_12843/cover.png" alt="程序叠加准确文字后的最终封面"><figcaption>程序化排版保证中文标题准确，并输出适配公众号的封面图。</figcaption></figure>
+          </div>
+          <div class="quality-assurance">
+            <article><span>CONTROL 01</span><h4>主题一致性</h4><p>主题规则与可选模型分析共同提取视觉线索，使背景与论文研究方向保持一致。</p><strong>输入依据：标题、摘要与关键词</strong></article>
+            <article><span>CONTROL 02</span><h4>文字准确性</h4><p>标题文字不交给生图模型生成，避免中文乱码、错字和论文名称失真。</p><strong>实现方式：Pillow + 本地中文字体</strong></article>
+            <article><span>CONTROL 03</span><h4>服务可用性</h4><p>优先调用配置的生图服务，接口失败时切换其他服务或生成本地主题背景。</p><strong>多级路径：API → 备用 API → 本地降级</strong></article>
+            <article><span>CONTROL 04</span><h4>局部可修改</h4><p>背景与最终封面分别保存，调整标题排版时无需重新调用生图服务。</p><strong>降低重复生成成本</strong></article>
           </div>
           <div class="module-value reveal">
-            <strong>实际意义</strong>
-            <p>封面兼顾主题相关性与标题准确性，生成成本可控，也支持在演示或运营阶段快速修改排版。</p>
+            <strong>模块产出</strong>
+            <p>输出与文章主题匹配、中文标题准确的公众号封面，同时保留无字背景，支持后续快速调整文字与版式。</p>
           </div>
         </div>
       </article>
@@ -481,27 +530,32 @@
               <i>→</i>
               <div><b>05</b><strong>展示结果</strong><small>状态轮询、历史记录、产物链接</small></div>
             </div>
-            <div class="module-data">
-              <div><span>输入</span><strong>研究主题 · 各模块配置与环境变量</strong></div>
-              <div><span>核心代码</span><strong>_run_real_pipeline() · DemoHandler · ThreadingHTTPServer</strong></div>
-              <div><span>输出</span><strong>demo/runs/{run_id}/ · /api/status · /api/history</strong></div>
+            <div class="module-output">
+              <div><span>任务输入</span><strong>研究主题与各模块运行配置</strong></div>
+              <div><span>运行管理</span><strong>独立目录、步骤状态、错误信息</strong></div>
+              <div><span>模块产出</span><strong>完整运行记录与全部阶段产物链接</strong></div>
             </div>
           </div>
         </div>
         <div class="module-page module-page-alt page-shell">
           <div class="module-subheading reveal">
-            <span>INTEGRATION & RECOVERY</span>
-            <h3>每次运行拥有独立目录、状态和可追踪产物</h3>
+            <span>ORCHESTRATION & OBSERVABILITY</span>
+            <h3>以运行实例为单位管理状态、产物与异常</h3>
           </div>
-          <div class="module-insights">
-            <article class="reveal"><span>隔离运行</span><p>每次任务创建唯一 run_id，论文、总结、图片和预览不会覆盖其他运行。</p></article>
-            <article class="reveal"><span>后台执行</span><p>耗时流程运行在后台线程，前端持续轮询状态并展示当前步骤。</p></article>
-            <article class="reveal"><span>异常可见</span><p>任一模块抛出异常都会写入运行状态，页面显示失败步骤和错误信息。</p></article>
-            <article class="reveal"><span>成果恢复</span><p>服务重启后读取最新完整运行结果，历史接口继续提供固定演示案例。</p></article>
+          <div class="run-observability reveal">
+            <div class="run-directory"><span>RUN / 20260614-161344-9eb0e8</span><strong>独立运行目录</strong><code>papers/</code><code>summaries/</code><code>summaries/images/</code><code>wechat/</code></div>
+            <div class="state-timeline"><span>PIPELINE STATE</span><div><b>01</b><p>论文检索与筛选</p><em>done</em></div><div><b>02</b><p>PDF 解析与总结</p><em>done</em></div><div><b>03</b><p>主题封面生成</p><em>done</em></div><div><b>04</b><p>公众号预览生成</p><em>done</em></div></div>
+            <div class="result-links"><span>RESULT</span><strong>一次运行形成完整证据链</strong><dl><div><dt>论文数据</dt><dd>paper.json</dd></div><div><dt>文章内容</dt><dd>article.md</dd></div><div><dt>视觉素材</dt><dd>cover.png</dd></div><div><dt>交付结果</dt><dd>preview.html</dd></div></dl></div>
+          </div>
+          <div class="quality-assurance">
+            <article><span>CONTROL 01</span><h4>运行隔离</h4><p>每次任务生成唯一 run_id，不同运行的论文、图片与预览互不覆盖。</p><strong>验证依据：独立目录结构</strong></article>
+            <article><span>CONTROL 02</span><h4>状态可见</h4><p>后台线程执行耗时任务，前端通过状态接口持续获取当前步骤和执行结果。</p><strong>状态：idle / running / complete / error</strong></article>
+            <article><span>CONTROL 03</span><h4>异常定位</h4><p>任一模块失败都会保留已完成产物，并在运行状态中记录失败步骤与错误信息。</p><strong>避免只能从头重跑</strong></article>
+            <article><span>CONTROL 04</span><h4>结果恢复</h4><p>服务启动时读取最近一次完整运行，历史接口继续提供已生成的演示结果。</p><strong>支持复现与课堂演示</strong></article>
           </div>
           <div class="module-value reveal">
-            <strong>实际意义</strong>
-            <p>五位成员开发的模块能够以稳定接口协同工作，真实演示、错误定位和成果复现都由同一套编排逻辑完成。</p>
+            <strong>模块产出</strong>
+            <p>将前四个模块组合为可重复执行的端到端任务，并为每次运行保留状态、错误和完整产物，支持演示、复现与问题定位。</p>
           </div>
         </div>
       </article>
