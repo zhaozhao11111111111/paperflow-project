@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="基于 MCP 的自动化文献总结与公众号内容生成流水线项目演示">
+  <title>知流 · 自动化文献内容流水线</title>
+  <link rel="stylesheet" href="styles.css?v=20260615-module2-formal">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#overview" aria-label="返回项目总览">
+      <span class="brand-mark"><span></span></span>
+      <span class="brand-name">知流研究台</span>
+      <span class="brand-en">PaperFlow</span>
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a class="active" href="#overview">选题意义</a>
+      <a href="#question">问题难点</a>
+      <a href="#workflow">技术总览</a>
+      <a href="#modules">模块详解</a>
+      <a href="#innovation">创新设计</a>
+      <a href="#runner">成果演示</a>
+    </nav>
+    <button class="header-cta" data-scroll="#runner">运行演示</button>
+    <button class="menu-toggle" aria-label="展开导航" aria-expanded="false">菜单</button>
+  </header>
+
+  <main>
+    <section class="hero" id="overview">
+      <div class="hero-grid page-shell">
+        <div class="hero-copy reveal">
+          <div class="project-badge">MCP · AUTOMATED RESEARCH WORKFLOW</div>
+          <p class="eyebrow">AUTOMATED LITERATURE-TO-WECHAT PIPELINE</p>
+          <h1>把科研阅读的<br><em>重复劳动</em><br>交给流水线。</h1>
+          <p class="hero-intro">面向“最新论文读不完、优质内容发不快”的真实场景，将检索、筛选、总结、配图、排版和发布连接为一套本地可运行的自动化方案。</p>
+          <div class="hero-members" aria-label="小组成员">
+            <span>TEAM MEMBERS</span>
+            <p>邓伊涵 · 朱睿 · 纪佳翼 · 吴雅琪 · 杨安民</p>
+          </div>
+          <dl class="hero-stats" aria-label="项目当前成果">
+            <div><dt>5</dt><dd>协作模块</dd></div>
+            <div><dt id="hero-run-count">0</dt><dd>真实运行结果</dd></div>
+            <div><dt>5</dt><dd>MCP 标准工具</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="visual-label">SCENARIO VALUE / 场景价值</div>
+          <div class="value-dashboard">
+            <div class="value-main">
+              <span>核心问题</span>
+              <strong>信息输入快<br>内容生产慢</strong>
+              <p>论文发现与公众号传播之间缺少稳定、低成本的自动化连接。</p>
+            </div>
+            <div class="value-card"><span>科研人员</span><strong>减少机械阅读</strong><small>先筛选，再深读</small></div>
+            <div class="value-card"><span>内容运营</span><strong>缩短制作链路</strong><small>总结、配图、排版自动衔接</small></div>
+            <div class="value-card accent-card"><span>项目价值</span><strong>一键形成可发布内容</strong><small>本地运行 · 低成本 · 可追踪</small></div>
+          </div>
+          <div class="visual-footer">
+            <strong>从论文检索到公众号内容，形成完整工作流</strong>
+            <span>ARXIV → LLM → MCP → WECHAT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="question-section section-space" id="question">
+      <div class="section-heading page-shell reveal">
+        <div>
+          <p class="eyebrow">PROBLEM & DIFFICULTY</p>
+          <h2>生成一次内容并不难，<br>难点在于让<em>全流程稳定运行。</em></h2>
+        </div>
+        <p>论文来源、文件格式和平台接口各不相同。项目需要处理每个环节的输入输出，并保证流程可以重复执行。</p>
+      </div>
+      <div class="difficulty-grid page-shell">
+        <article class="difficulty-card reveal">
+          <span class="difficulty-index">01 / INPUT</span>
+          <h3>最新论文如何筛得准？</h3>
+          <p>关键词检索会产生大量弱相关结果，摘要还可能被截断。若直接交给模型逐篇判断，调用成本随候选数量增长，旧论文和重复论文也会反复消耗额度。</p>
+          <strong>核心矛盾：信息新鲜度、相关性与筛选成本难以同时兼顾</strong>
+        </article>
+        <article class="difficulty-card reveal">
+          <span class="difficulty-index">02 / CONTENT</span>
+          <h3>PDF 如何变成可信内容？</h3>
+          <p>论文图表可能是整页图片、矢量元素或文字与线条组合，不能依赖“提取内嵌图片”。直接总结全文又容易引入噪声，让图文对应关系失真。</p>
+          <strong>核心矛盾：结构理解、图表精确定位与内容忠实度</strong>
+        </article>
+        <article class="difficulty-card reveal">
+          <span class="difficulty-index">03 / DELIVERY</span>
+          <h3>内容怎样真正进入发布流程？</h3>
+          <p>Markdown、图片素材、微信 HTML、封面 media_id 和草稿接口具有不同的数据约束。生成后的文章还需要完成格式转换、素材上传和接口校验，才能进入发布流程。</p>
+          <strong>核心矛盾：内容表达与平台工程约束之间存在断层</strong>
+        </article>
+        <article class="difficulty-card reveal">
+          <span class="difficulty-index">04 / RELIABILITY</span>
+          <h3>多环节失败后如何定位和恢复？</h3>
+          <p>检索、下载、解析、模型调用、生图和平台接口都可能独立失败。若只保留最终结果，任何异常都要从头重跑，也无法判断错误来源。</p>
+          <strong>核心矛盾：流程越长，可观测性和可恢复性越重要</strong>
+        </article>
+      </div>
+      <div class="significance-strip page-shell reveal">
+        <div><span>选题意义 01</span><strong>缓解论文增长与人工阅读时间之间的矛盾</strong><small>先由机器初筛，再由研究者深读，让更多时间用于分析和判断。</small></div>
+        <div><span>选题意义 02</span><strong>缩短学术成果从发现到传播的链路</strong><small>将总结、配图和排版纳入同一流程，降低重复制作成本。</small></div>
+        <div><span>选题意义 03</span><strong>提高 AI 生成内容的可检查性</strong><small>保留论文证据、图表来源和中间产物，支持人工复核。</small></div>
+        <div><span>选题意义 04</span><strong>验证 MCP 在跨工具协作中的工程价值</strong><small>编排层通过标准工具调用平台能力，减少对接口细节的耦合。</small></div>
+      </div>
+    </section>
+
+    <section class="workflow-section section-space" id="workflow">
+      <div class="section-heading page-shell reveal">
+        <div>
+          <p class="eyebrow">SOLUTION</p>
+          <h2>五个模块协同，<br><em>串起完整生产链路。</em></h2>
+        </div>
+        <p>这一部分展示系统由哪些模块构成，以及论文如何依次经过检索、总结、排版、封面生成和任务编排。</p>
+      </div>
+
+      <div class="pipeline page-shell reveal">
+        <article class="pipeline-step" data-step="0">
+          <span class="step-no">01</span>
+          <div class="step-icon">AR</div>
+          <h3>论文爬取与筛选</h3>
+          <p>程序先做月份过滤与本地去重，再让 LLM 判断价值，避免把调用额度浪费在明显无效的论文上。</p>
+          <small>纪佳翼 · OUTPUT PAPER.JSON</small>
+        </article>
+        <div class="pipeline-arrow">→</div>
+        <article class="pipeline-step" data-step="1">
+          <span class="step-no">02</span>
+          <div class="step-icon">MD</div>
+          <h3>论文结构化总结</h3>
+          <p>按 Figure/Table 标题定位裁剪区域，同时抽取正文，让模型基于论文证据生成结构化文章。</p>
+          <small>邓伊涵 · OUTPUT ARTICLE.MD</small>
+        </article>
+        <div class="pipeline-arrow">→</div>
+        <article class="pipeline-step" data-step="2">
+          <span class="step-no">03</span>
+          <div class="step-icon">MCP</div>
+          <h3>公众号排版发布</h3>
+          <p>将排版、图片上传、草稿和发布包装为 MCP 工具，降低编排层对微信接口细节的依赖。</p>
+          <small>吴雅琪 · OUTPUT PREVIEW.HTML</small>
+        </article>
+        <div class="pipeline-arrow">→</div>
+        <article class="pipeline-step" data-step="3">
+          <span class="step-no">04</span>
+          <div class="step-icon">IMG</div>
+          <h3>主题封面生成</h3>
+          <p>AI 只生成无文字背景，标题由程序叠加，避免生图模型生成乱码或错误论文名称。</p>
+          <small>杨安民 · OUTPUT COVER.PNG</small>
+        </article>
+        <div class="pipeline-arrow">→</div>
+        <article class="pipeline-step" data-step="4">
+          <span class="step-no">05</span>
+          <div class="step-icon">RUN</div>
+          <h3>编排与异常处理</h3>
+          <p>统一管理任务触发、失败重试、运行状态和定时执行，协调前面四个模块。</p>
+          <small>朱睿 · OUTPUT RUN LOG</small>
+        </article>
+      </div>
+
+    </section>
+
+    <section class="module-details" id="modules">
+      <article class="module-chapter module-one" id="module-1">
+        <div class="module-page page-shell">
+          <div class="module-heading reveal">
+            <div>
+              <span>MODULE 01 · 纪佳翼</span>
+              <h2>论文爬取与<br><em>智能筛选</em></h2>
+            </div>
+            <p>从研究关键词出发获取近期论文，先用确定性规则压缩候选范围，再调用大模型判断论文价值，最终形成可追踪的论文数据集。</p>
+          </div>
+          <div class="route-layout reveal">
+            <div class="route-flow">
+              <div><b>01</b><strong>创建浏览器</strong><small>Selenium + ChromeDriver</small></div>
+              <i>→</i>
+              <div><b>02</b><strong>检索 arXiv</strong><small>关键词搜索与翻页浏览</small></div>
+              <i>→</i>
+              <div><b>03</b><strong>规则预筛</strong><small>月份过滤、本地去重</small></div>
+              <i>→</i>
+              <div><b>04</b><strong>补全摘要</strong><small>必要时进入详情页</small></div>
+              <i>→</i>
+              <div><b>05</b><strong>LLM 判断</strong><small>相关性、价值与额外要求</small></div>
+            </div>
+            <div class="module-data">
+              <div><span>输入</span><strong>query / select_top_n / extra_query</strong></div>
+              <div><span>核心代码</span><strong>run_pipeline() · _search_arxiv() · _llm_check_paper()</strong></div>
+              <div><span>输出</span><strong>papers/*.json · checked.json · quick_result.md</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-page module-page-alt page-shell">
+          <div class="module-subheading reveal">
+            <span>WHY THIS DESIGN</span>
+            <h3>筛选成本集中在真正需要语义理解的论文上</h3>
+          </div>
+          <div class="module-insights">
+            <article class="reveal"><span>日期过滤</span><p>根据 arXiv ID 的年月前缀限制近期论文，避免旧结果进入模型判断阶段。</p></article>
+            <article class="reveal"><span>双重去重</span><p>分别记录已保存论文和已检查论文，重复候选无需再次调用模型。</p></article>
+            <article class="reveal"><span>受控调用</span><p>浏览数量、LLM 调用次数和目标保存篇数都有上限，保证一次任务成本可预测。</p></article>
+            <article class="reveal"><span>筛选可解释</span><p>模型返回匹配结论和原因，论文 JSON 同时保存标题、摘要、作者、链接和检索主题。</p></article>
+          </div>
+          <div class="module-value reveal">
+            <strong>实际意义</strong>
+            <p>研究者无需逐条打开搜索结果，先获得规模较小、理由明确的候选论文集合，再进行人工深读。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="module-chapter module-two" id="module-2">
+        <div class="module-page module-two-route page-shell">
+          <div class="module-heading reveal">
+            <div>
+              <span>MODULE 02 · 邓伊涵</span>
+              <h2>先构建论文证据，<br>再生成<em>可信内容</em></h2>
+            </div>
+            <p>模块 2 负责连接“学术 PDF”与“公众号文章”。系统先把元数据、正文和图表整理成可检查的证据包，再让模型在证据范围内完成内容重组。</p>
+          </div>
+
+          <div class="evidence-pipeline reveal">
+            <div class="evidence-source">
+              <span>INPUT / 论文数据</span>
+              <strong>paper.json</strong>
+              <small>标题 · 作者 · arXiv ID<br>搜索摘要 · PDF URL</small>
+            </div>
+            <div class="evidence-lanes">
+              <div>
+                <b>01 · METADATA</b>
+                <strong>摘要完整性检查</strong>
+                <p>检测省略号与摘要长度；内容不完整时调用 arXiv API，通过 arXiv ID 补全摘要。</p>
+              </div>
+              <div>
+                <b>02 · DOCUMENT</b>
+                <strong>PDF 正文解析</strong>
+                <p>下载 PDF 后使用 PyMuPDF 按页提取文本，限制输入长度，保留方法与实验所需上下文。</p>
+              </div>
+              <div>
+                <b>03 · LAYOUT</b>
+                <strong>Figure / Table 定位</strong>
+                <p>正则识别图表标题，记录页码与坐标，再结合页面对象计算精确裁剪框。</p>
+              </div>
+            </div>
+            <div class="evidence-bundle">
+              <span>EVIDENCE BUNDLE</span>
+              <strong>可检查的论文证据包</strong>
+              <ul>
+                <li>完整摘要与正文摘录</li>
+                <li>图表路径、页码、类型与原始标题</li>
+                <li>论文来源、作者及检索背景</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="generation-route reveal">
+            <div><b>04</b><strong>构造受约束提示词</strong><small>明确元数据、正文摘录、可用图表及写作规则</small></div>
+            <i>→</i>
+            <div><b>05</b><strong>LLM 输出结构化 JSON</strong><small>标题、导语、章节、image_slot、中文图注</small></div>
+            <i>→</i>
+            <div><b>06</b><strong>程序组装 Markdown</strong><small>插入图片并写入 front matter 与来源信息</small></div>
+          </div>
+
+          <div class="processing-architecture reveal">
+            <article>
+              <span>STAGE A · EVIDENCE ACQUISITION</span>
+              <h4>多源证据采集</h4>
+              <p>将搜索结果中的论文元数据与 arXiv 完整摘要、PDF 正文和版面对象合并，统一形成论文级输入。</p>
+              <dl>
+                <div><dt>元数据</dt><dd>标题、作者、时间、检索主题</dd></div>
+                <div><dt>文本证据</dt><dd>完整摘要、正文摘录</dd></div>
+                <div><dt>视觉证据</dt><dd>Figure、Table、页码、原始图注</dd></div>
+              </dl>
+            </article>
+            <article>
+              <span>STAGE B · GROUNDED GENERATION</span>
+              <h4>证据约束生成</h4>
+              <p>模型接收已编号的图表清单和论文文本，并按照固定内容模式生成文章，避免自由格式输出影响后续处理。</p>
+              <dl>
+                <div><dt>内容结构</dt><dd>标题、导语、方法、实验、总结</dd></div>
+                <div><dt>图文关联</dt><dd>image_slot 对应已提取图表</dd></div>
+                <div><dt>输出格式</dt><dd>可校验的结构化 JSON</dd></div>
+              </dl>
+            </article>
+            <article>
+              <span>STAGE C · DETERMINISTIC ASSEMBLY</span>
+              <h4>确定性文章组装</h4>
+              <p>程序依据结构化结果插入图片、图注和来源链接，并在 Markdown 头部保存完整溯源信息。</p>
+              <dl>
+                <div><dt>文章正文</dt><dd>公众号风格 Markdown</dd></div>
+                <div><dt>媒体资源</dt><dd>独立 Figure / Table PNG</dd></div>
+                <div><dt>溯源字段</dt><dd>arXiv ID、PDF、源 JSON、生成时间</dd></div>
+              </dl>
+            </article>
+          </div>
+        </div>
+
+        <div class="module-page module-two-innovation module-page-alt page-shell">
+          <div class="module-subheading reveal">
+            <span>TECHNICAL INNOVATION</span>
+            <h3>版面几何定位与证据约束生成，<br>共同降低<em>图文错配</em></h3>
+          </div>
+
+          <div class="crop-showcase reveal">
+            <figure class="paper-visual figure-visual">
+              <div class="visual-image">
+                <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/figure_1.png" alt="从真实论文 PDF 中提取的方法流程图">
+                <span>IMAGE BLOCK BOUNDARY</span>
+              </div>
+              <figcaption><b>Figure 提取</b><span>寻找标题上方最近的 PDF 图片块，以对象边界作为裁剪区域，避免按固定高度截入正文。</span></figcaption>
+            </figure>
+
+            <div class="crop-method">
+              <span>LAYOUT-AWARE EXTRACTION</span>
+              <h4>版面感知图表提取</h4>
+              <ol>
+                <li><b>标题检测</b><p>逐行识别 Figure、Fig.、Table 及编号，记录标题类型、页码与坐标。</p></li>
+                <li><b>候选区域生成</b><p>Figure 搜索标题上方最近图片块；Table 搜索标题下方连续横线簇。</p></li>
+                <li><b>边界约束</b><p>以下一图表标题、页面边缘和最大高度共同限制裁剪范围。</p></li>
+                <li><b>自适应回退</b><p>缺少横线时，根据文本块间距、章节标题与正文特征推断表格结束位置。</p></li>
+                <li><b>质量校验</b><p>过滤尺寸过小的区域，并以 2× 分辨率渲染为独立 PNG。</p></li>
+              </ol>
+              <div class="boundary-rule">
+                <span>BOUNDARY RULE</span>
+                <strong>图表结构特征 + 相邻内容边界 + 回退判定</strong>
+              </div>
+            </div>
+
+            <figure class="paper-visual table-visual">
+              <div class="visual-image">
+                <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/table_10.png" alt="从真实论文 PDF 中提取的实验结果表格">
+                <span>RULING-LINE CLUSTER</span>
+              </div>
+              <figcaption><b>Table 提取</b><span>利用表格横线簇确定上下边界，并保留紧邻的 Note 行，减少论文段落混入。</span></figcaption>
+            </figure>
+          </div>
+
+          <div class="module-two-claims">
+            <article class="reveal">
+              <span>创新 01</span>
+              <h4>从“提取图片”升级为版面感知裁剪</h4>
+              <p>兼容位图 Figure、矢量 Table 和无内嵌图片对象的 PDF。裁剪依据来自页面真实几何结构，因此比固定区域截图更精确。</p>
+              <strong>解决：裁到论文正文、漏掉表格边界、相邻图表混入</strong>
+            </article>
+            <article class="reveal">
+              <span>创新 02</span>
+              <h4>让模型只在证据包内组织内容</h4>
+              <p>提示词显式传入论文元数据、正文摘录和图表清单，并要求以 image_slot 引用已有图片，章节与图注采用结构化 JSON 输出。</p>
+              <strong>解决：内容无依据扩写、图文关系不稳定、格式难以解析</strong>
+            </article>
+            <article class="reveal">
+              <span>创新 03</span>
+              <h4>Markdown 同时承担文章与数据契约</h4>
+              <p>front matter 保存 arXiv ID、PDF 链接、源 JSON、生成时间和全部配图信息，正文则保持公众号可读结构。</p>
+              <strong>解决：生成结果无法追溯、后续模块缺少稳定输入</strong>
+            </article>
+          </div>
+
+          <div class="module-value module-two-value reveal">
+            <strong>技术路径的核心价值</strong>
+            <p>模型负责理解与改写，确定性程序负责来源补全、版面计算、格式组装和路径记录。两类能力各自处理擅长的问题，使生成文章既有可读性，也能回溯到论文原文和具体图表。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="module-chapter module-three" id="module-3">
+        <div class="module-page page-shell">
+          <div class="module-heading reveal">
+            <div>
+              <span>MODULE 03 · 吴雅琪</span>
+              <h2>Markdown 转<br><em>微信公众号内容</em></h2>
+            </div>
+            <p>解析 Markdown 和 front matter，将正文转换为公众号可用的内联样式 HTML，并通过 MCP 暴露预览、草稿和发布能力。</p>
+          </div>
+          <div class="route-layout reveal">
+            <div class="route-flow">
+              <div><b>01</b><strong>解析 Markdown</strong><small>元数据、正文与图片路径</small></div>
+              <i>→</i>
+              <div><b>02</b><strong>转换 HTML</strong><small>标题、引用、列表、链接、图片</small></div>
+              <i>→</i>
+              <div><b>03</b><strong>本地预览</strong><small>生成 preview.html</small></div>
+              <i>→</i>
+              <div><b>04</b><strong>上传素材</strong><small>正文图片与封面 media_id</small></div>
+              <i>→</i>
+              <div><b>05</b><strong>草稿 / 发布</strong><small>draft/add 与 freepublish</small></div>
+            </div>
+            <div class="module-data">
+              <div><span>输入</span><strong>summaries/*.md · summaries/images/*</strong></div>
+              <div><span>核心代码</span><strong>markdown_to_wechat_html() · render_preview_html() · upload_markdown_to_draft()</strong></div>
+              <div><span>输出</span><strong>wechat_articles/*.preview.html · published.json</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-page module-page-alt page-shell">
+          <div class="module-subheading reveal">
+            <span>MCP TOOL LAYER</span>
+            <h3>发布能力以五个标准工具提供给编排层</h3>
+          </div>
+          <div class="tool-route reveal">
+            <code>list_wechat_markdown</code>
+            <code>preview_wechat_article</code>
+            <code>create_wechat_draft</code>
+            <code>publish_wechat_article</code>
+            <code>publish_latest_wechat_articles</code>
+          </div>
+          <div class="module-insights">
+            <article class="reveal"><span>预览优先</span><p>默认生成本地 HTML，先检查标题、图片和移动端排版，再决定是否上传。</p></article>
+            <article class="reveal"><span>素材适配</span><p>本地图片上传后替换为微信 URL，封面转换为草稿接口要求的 thumb_media_id。</p></article>
+            <article class="reveal"><span>权限隔离</span><p>本地预览无需公众号权限；真实草稿和发布才读取 AppID、Secret 与白名单配置。</p></article>
+            <article class="reveal"><span>统一调用</span><p>命令行、MCP Client 和模块5可以复用同一套核心函数，避免维护多份发布逻辑。</p></article>
+          </div>
+          <div class="module-value reveal">
+            <strong>实际意义</strong>
+            <p>内容生成与平台发布形成清晰边界，发布操作可以预览、审核和复用，降低误发与接口变更带来的风险。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="module-chapter module-four" id="module-4">
+        <div class="module-page page-shell">
+          <div class="module-heading reveal">
+            <div>
+              <span>MODULE 04 · 杨安民</span>
+              <h2>主题封面<br><em>自动生成</em></h2>
+            </div>
+            <p>从文章元数据和正文提取主题、标题与关键词，调用低成本生图服务生成背景，再通过 Pillow 完成准确的文字排版。</p>
+          </div>
+          <div class="route-layout reveal">
+            <div class="route-flow">
+              <div><b>01</b><strong>读取文章</strong><small>标题、副标题、正文摘要</small></div>
+              <i>→</i>
+              <div><b>02</b><strong>识别主题</strong><small>规则检测 + 可选 LLM brief</small></div>
+              <i>→</i>
+              <div><b>03</b><strong>构造提示词</strong><small>主题视觉与纯背景约束</small></div>
+              <i>→</i>
+              <div><b>04</b><strong>生成背景</strong><small>SiliconFlow / Pollinations / 本地降级</small></div>
+              <i>→</i>
+              <div><b>05</b><strong>叠加文字</strong><small>Pillow 排版标题与关键词</small></div>
+            </div>
+            <div class="module-data">
+              <div><span>输入</span><strong>Markdown front matter · article body</strong></div>
+              <div><span>核心代码</span><strong>generate_cover_for_markdown() · enrich_cover_context() · _render_text_overlay()</strong></div>
+              <div><span>输出</span><strong>cover_bg.png · cover.png · covers.json</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-page module-page-alt page-shell">
+          <div class="module-subheading reveal">
+            <span>VISUAL RELIABILITY</span>
+            <h3>背景生成与文字排版分别处理</h3>
+          </div>
+          <div class="module-insights">
+            <article class="reveal"><span>主题匹配</span><p>根据 RAG、金融、地理等语义选择视觉主题，并从文章提取更具体的画面线索。</p></article>
+            <article class="reveal"><span>文字准确</span><p>生图提示词要求无文字背景，中文标题由本地字体绘制，避免乱码和错字。</p></article>
+            <article class="reveal"><span>多级降级</span><p>优先使用配置的生图 API，网络或服务失败时生成本地主题渐变背景。</p></article>
+            <article class="reveal"><span>局部重做</span><p>背景和最终封面分开保存，文字样式调整时无需再次调用生图 API。</p></article>
+          </div>
+          <div class="module-value reveal">
+            <strong>实际意义</strong>
+            <p>封面兼顾主题相关性与标题准确性，生成成本可控，也支持在演示或运营阶段快速修改排版。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="module-chapter module-five" id="module-5">
+        <div class="module-page page-shell">
+          <div class="module-heading reveal">
+            <div>
+              <span>MODULE 05 · 朱睿</span>
+              <h2>流水线编排与<br><em>端到端集成</em></h2>
+            </div>
+            <p>统一调用前四个模块，管理运行目录、任务状态和错误信息，并通过本地 Web API 将真实执行过程展示在演示页面中。</p>
+          </div>
+          <div class="route-layout reveal">
+            <div class="route-flow">
+              <div><b>01</b><strong>接收任务</strong><small>POST /api/run + research query</small></div>
+              <i>→</i>
+              <div><b>02</b><strong>创建运行目录</strong><small>papers / summaries / wechat</small></div>
+              <i>→</i>
+              <div><b>03</b><strong>顺序编排</strong><small>crawl → summarize → cover → preview</small></div>
+              <i>→</i>
+              <div><b>04</b><strong>更新状态</strong><small>线程锁保护 RUN_STATE</small></div>
+              <i>→</i>
+              <div><b>05</b><strong>展示结果</strong><small>状态轮询、历史记录、产物链接</small></div>
+            </div>
+            <div class="module-data">
+              <div><span>输入</span><strong>研究主题 · 各模块配置与环境变量</strong></div>
+              <div><span>核心代码</span><strong>_run_real_pipeline() · DemoHandler · ThreadingHTTPServer</strong></div>
+              <div><span>输出</span><strong>demo/runs/{run_id}/ · /api/status · /api/history</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="module-page module-page-alt page-shell">
+          <div class="module-subheading reveal">
+            <span>INTEGRATION & RECOVERY</span>
+            <h3>每次运行拥有独立目录、状态和可追踪产物</h3>
+          </div>
+          <div class="module-insights">
+            <article class="reveal"><span>隔离运行</span><p>每次任务创建唯一 run_id，论文、总结、图片和预览不会覆盖其他运行。</p></article>
+            <article class="reveal"><span>后台执行</span><p>耗时流程运行在后台线程，前端持续轮询状态并展示当前步骤。</p></article>
+            <article class="reveal"><span>异常可见</span><p>任一模块抛出异常都会写入运行状态，页面显示失败步骤和错误信息。</p></article>
+            <article class="reveal"><span>成果恢复</span><p>服务重启后读取最新完整运行结果，历史接口继续提供固定演示案例。</p></article>
+          </div>
+          <div class="module-value reveal">
+            <strong>实际意义</strong>
+            <p>五位成员开发的模块能够以稳定接口协同工作，真实演示、错误定位和成果复现都由同一套编排逻辑完成。</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="innovation-section section-space" id="innovation">
+      <div class="section-heading page-shell reveal">
+        <div>
+          <p class="eyebrow">CROSS-MODULE INNOVATION</p>
+          <h2>五个模块共同形成<br><em>可追踪、可恢复的系统能力。</em></h2>
+        </div>
+        <p>前面的章节说明各模块如何实现；这一部分聚焦模块连接后形成的整体创新，以及这些设计如何回应真实场景约束。</p>
+      </div>
+
+      <div class="innovation-position page-shell reveal">
+        <span>创新定位</span>
+        <strong>面向科研内容生产的系统方法创新</strong>
+        <p>各模块以可检查的中间产物连接，确定性程序处理格式与约束，大模型负责语义判断和内容生成，最终形成可独立验证、局部重做的连续流水线。</p>
+      </div>
+
+      <div class="innovation-grid page-shell">
+        <article class="innovation-card reveal">
+          <span>01 / DECISION FUNNEL</span>
+          <h3>通过分层筛选控制 LLM 调用范围</h3>
+          <p><b>常见做法：</b>抓到论文后逐篇调用模型判断。</p>
+          <p><b>本项目机制：</b>月份过滤、本地去重、摘要补全先缩小候选集，再进行语义价值判断。</p>
+          <strong>创新价值：把模型用在必须理解语义的环节，兼顾新鲜度、精度与调用成本。</strong>
+        </article>
+        <article class="innovation-card reveal">
+          <span>02 / EVIDENCE GROUNDING</span>
+          <h3>先构造证据包，再生成公众号内容</h3>
+          <p><b>常见做法：</b>仅凭标题和摘要一次性生成文章。</p>
+          <p><b>本项目机制：</b>组合论文元数据、补全摘要、PDF 正文与图表清单，要求模型输出结构化章节和图片引用。</p>
+          <strong>创新价值：生成过程由论文证据约束，降低内容空泛、图文错配和无依据扩写。</strong>
+        </article>
+        <article class="innovation-card reveal">
+          <span>03 / GEOMETRY-AWARE CROP</span>
+          <h3>基于版面几何关系提取论文图表</h3>
+          <p><b>常见做法：</b>提取 PDF 内嵌图片或按固定高度截图。</p>
+          <p><b>本项目机制：</b>联合 Figure/Table 标题、图片块、表格横线和相邻标题边界计算裁剪区域。</p>
+          <strong>创新价值：兼容图片、矢量表格等不同 PDF 结构，并减少正文和相邻图表混入。</strong>
+        </article>
+        <article class="innovation-card reveal">
+          <span>04 / DECOUPLED COVER</span>
+          <h3>把视觉生成与文字准确性解耦</h3>
+          <p><b>常见做法：</b>让生图模型直接生成含标题的完整封面。</p>
+          <p><b>本项目机制：</b>模型只负责主题背景，准确标题、副标题和关键词由 Pillow 程序化排版。</p>
+          <strong>创新价值：保留生成式视觉表现，同时避免中文乱码、错字和论文名称失真。</strong>
+        </article>
+        <article class="innovation-card reveal">
+          <span>05 / ARTIFACT CONTRACT</span>
+          <h3>用中间产物定义模块间数据契约</h3>
+          <p><b>常见做法：</b>函数间传递临时对象，失败后只能整体重跑。</p>
+          <p><b>本项目机制：</b>以 JSON、Markdown、PNG、HTML 作为阶段输出，路径和元数据可被后续模块读取。</p>
+          <strong>创新价值：模块可独立测试、替换和复用，错误也能定位到具体阶段。</strong>
+        </article>
+        <article class="innovation-card reveal">
+          <span>06 / SAFE DELIVERY</span>
+          <h3>将发布动作变成可预览的 MCP 能力</h3>
+          <p><b>常见做法：</b>业务脚本直接耦合微信上传和草稿接口。</p>
+          <p><b>本项目机制：</b>封装预览、图片上传、草稿与发布工具，默认先生成本地 HTML 供人工确认。</p>
+          <strong>创新价值：把不可逆发布变成受控步骤，并让同一能力可被不同编排器调用。</strong>
+        </article>
+      </div>
+
+      <div class="reasoning-table page-shell reveal">
+        <div class="reasoning-head"><span>场景约束</span><span>设计选择</span><span>可验证结果</span></div>
+        <div><span>候选论文多、模型调用有限</span><strong>规则预筛 + LLM 语义判断</strong><small>记录浏览数量、调用次数和最终入选论文</small></div>
+        <div><span>PDF 结构不统一、图表易错裁</span><strong>标题、图片块、横线与邻接边界联合定位</strong><small>输出独立 PNG，可逐张检查裁剪结果</small></div>
+        <div><span>生成式图片文字不可控</span><strong>无文字背景生成 + 程序化文字叠加</strong><small>背景与最终封面分别保存，可单独重新排版</small></div>
+        <div><span>外部接口容易变化或失败</span><strong>中间产物 + MCP 工具边界 + 发布前预览</strong><small>各阶段可复核，预览不产生正式发布副作用</small></div>
+      </div>
+    </section>
+
+    <section class="runner-section section-space" id="runner">
+      <div class="runner-layout page-shell">
+        <div class="runner-copy reveal">
+          <p class="eyebrow">PIPELINE DEMO</p>
+          <h2>输入研究主题，<br><em>运行完整流程。</em></h2>
+          <p>选择一个研究方向，页面会依次展示论文检索、筛选、总结、封面生成和公众号排版过程。</p>
+          <label for="topic">研究主题</label>
+          <div class="topic-input">
+            <input id="topic" value="retrieval augmented generation" autocomplete="off">
+            <button id="run-pipeline">开始运行</button>
+          </div>
+          <div class="example-topics">
+            <button data-topic="retrieval augmented generation">RAG</button>
+            <button data-topic="option volatility curve fitting">金融曲线</button>
+            <button data-topic="geospatial question answering">地理问答</button>
+          </div>
+        </div>
+
+        <div class="runner-console reveal" aria-live="polite">
+          <div class="console-top">
+            <div><i></i><i></i><i></i></div>
+            <span>paperflow / local-run</span>
+            <b id="runner-status">READY</b>
+          </div>
+          <div class="run-progress"><span id="run-progress-bar"></span></div>
+          <ol class="run-list">
+            <li data-run-step="0"><span>01</span><div><strong>检索 arXiv 最新论文</strong><small>等待输入关键词</small></div><b>待命</b></li>
+            <li data-run-step="1"><span>02</span><div><strong>LLM 相关性筛选</strong><small>最多 5 次模型调用</small></div><b>待命</b></li>
+            <li data-run-step="2"><span>03</span><div><strong>PDF 解析与 Markdown 总结</strong><small>识别 Figure / Table 标题并裁剪</small></div><b>待命</b></li>
+            <li data-run-step="3"><span>04</span><div><strong>生成主题封面</strong><small>AI 背景 + Pillow 文字叠加</small></div><b>待命</b></li>
+            <li data-run-step="4"><span>05</span><div><strong>MCP 生成公众号预览</strong><small>转换 HTML 并检查移动端排版</small></div><b>待命</b></li>
+          </ol>
+          <div class="run-result" id="run-result">
+            <img src="../module123/get_data/summaries/images/2605_22203/cover.png" alt="生成的论文公众号封面">
+            <div>
+              <span>PIPELINE COMPLETE</span>
+              <strong>低资源语言 RAG 怎么切块？四种策略对比，递归法胜出</strong>
+              <button id="open-run-preview">打开公众号预览</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="outputs-section section-space" id="outputs">
+      <div class="section-heading page-shell reveal">
+        <div>
+          <p class="eyebrow">RESULTS & EVIDENCE</p>
+          <h2>每篇文章都保留<br><em>完整处理记录。</em></h2>
+        </div>
+        <p>下方三篇内容均由流水线实际生成，分别覆盖 RAG、金融机器学习和空间推理。每篇都保留论文 JSON、Markdown、封面和公众号 HTML。</p>
+      </div>
+      <div class="evidence-grid page-shell reveal">
+        <div><strong id="real-run-count">0</strong><span>真实运行记录</span><small>三次独立任务完整跑通</small></div>
+        <div><strong id="real-paper-count">0</strong><span>arXiv 论文</span><small>每条记录保留论文元数据</small></div>
+        <div><strong id="real-cover-count">0</strong><span>生成封面</span><small>来自实际生图 API 调用</small></div>
+        <div><strong id="real-preview-count">0</strong><span>公众号预览</span><small>由 Markdown 实际转换生成</small></div>
+      </div>
+      <div class="article-grid page-shell" id="real-results">
+        <p class="results-loading">正在读取真实运行记录…</p>
+      </div>
+    </section>
+
+    <section class="mcp-section section-space" id="difference">
+      <div class="mcp-panel page-shell reveal">
+        <div class="mcp-copy">
+          <p class="eyebrow">REFERENCE & DIFFERENCE</p>
+          <h2>基于成熟组件，<br>形成<em>新的协作方法。</em></h2>
+          <p>项目根据各环节的确定性、风险和数据形态，明确程序、模型与人工确认的职责，并通过统一的数据接口连接这些能力。</p>
+        </div>
+        <div class="difference-table">
+          <div class="difference-head"><span>常见做法</span><span>本项目的针对性改进</span></div>
+          <div><span>模型包办检索、判断和写作</span><strong>确定性任务由程序执行，模型只承担语义判断与内容组织</strong></div>
+          <div><span>仅按固定区域截取 PDF 页面</span><strong>利用标题、图片块、横线和相邻边界共同推断图表范围</strong></div>
+          <div><span>生图模型直接生成整张封面</span><strong>视觉背景与准确文字分层生成，二者可独立修改和复用</strong></div>
+          <div><span>脚本直接调用微信接口</span><strong>封装为 MCP 工具并设置本地预览环节，降低发布风险</strong></div>
+          <div><span>只展示最终文章</span><strong>保留 JSON → Markdown → PNG → HTML 全链路证据和中间产物</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing-section section-space">
+      <div class="closing-panel page-shell reveal">
+        <p class="eyebrow">PAPERFLOW</p>
+        <h2>论文从发现、理解到发布，<br>在同一条流水线中<em>连续完成。</em></h2>
+        <div class="closing-points">
+          <span>真实场景</span><span>模块化方案</span><span>可检查产物</span><span>MCP 工具化</span><span>本地低成本</span>
+        </div>
+        <button class="button button-dark" data-scroll="#runner">运行流水线</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="page-shell">
+      <div class="footer-brand"><span class="brand-mark"><span></span></span><strong>知流研究台</strong></div>
+      <p>自动化文献总结与公众号内容生成流水线（基于 MCP）</p>
+      <span>LOCAL · MODULAR · TRACEABLE</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

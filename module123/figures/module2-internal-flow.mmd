@@ -1,0 +1,36 @@
+%%{init: {"theme": "base", "themeVariables": {"background": "transparent", "primaryColor": "#F8FAFC", "primaryTextColor": "#0F172A", "primaryBorderColor": "#475569", "lineColor": "#475569", "secondaryColor": "#EEF2FF", "tertiaryColor": "#ECFDF5", "fontFamily": "Arial, Helvetica, sans-serif"}}}%%
+flowchart TB
+    A["论文 JSON 输入<br/>papers/*.json"] --> B["读取元数据<br/>标题、作者、摘要、链接"]
+    B --> C["解析与补全 arXiv 信息<br/>arXiv ID、entry_id、pdf_url"]
+    C --> D{"摘要是否完整"}
+    D -- "否" --> E["调用 arXiv API<br/>补全完整摘要"]
+    D -- "是" --> F["整理论文上下文"]
+    E --> F
+
+    F --> G{"是否启用 PDF 处理"}
+    G -- "是" --> H["下载或复用 PDF 缓存<br/>summaries/pdfs/"]
+    H --> I["提取 PDF 正文<br/>控制最大上下文长度"]
+    H --> J["识别 Figure / Table 标题<br/>定位页面图表区域"]
+    J --> K["裁剪并渲染图表 PNG<br/>summaries/images/"]
+    I --> L["构造大模型提示词<br/>元数据 + 摘要 + 正文摘录 + 图表列表"]
+    K --> L
+    G -- "否" --> L
+
+    L --> M["调用大语言模型<br/>生成结构化 JSON 文稿"]
+    M --> N["解析模型返回 JSON<br/>标题、导语、小节、结尾、配图位置"]
+    N --> O["组装公众号风格 Markdown<br/>标题、导语、正文小节、图片、原文链接"]
+    O --> P["写入 YAML Front Matter<br/>wechat_title、inline_images、source_json 等"]
+    P --> Q["保存 Markdown 文件<br/>summaries/*.md"]
+    Q --> R["更新处理索引<br/>summarized.json 与 index.md"]
+
+    classDef input fill:#EEF2FF,stroke:#3730A3,stroke-width:1.5px,color:#111827;
+    classDef process fill:#F8FAFC,stroke:#475569,stroke-width:1.2px,color:#0F172A;
+    classDef decision fill:#FFF7ED,stroke:#C2410C,stroke-width:1.3px,color:#111827;
+    classDef model fill:#ECFDF5,stroke:#047857,stroke-width:1.5px,color:#064E3B;
+    classDef output fill:#FDF2F8,stroke:#BE185D,stroke-width:1.5px,color:#831843;
+
+    class A input;
+    class B,C,E,F,H,I,J,K,N,O,P process;
+    class D,G decision;
+    class L,M model;
+    class Q,R output;

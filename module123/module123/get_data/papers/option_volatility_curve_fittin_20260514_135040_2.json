@@ -1,0 +1,18 @@
+{
+  "title": "The fine structure of electricity price volatility",
+  "authors": [
+    "Thomas K. Kloster",
+    "Fred Espen Benth"
+  ],
+  "summary": "We conduct the first rigorous study of electricity price volatility for the full panel of electricity prices across three European generation zones. By interpreting the observed day-ahead prices as local averages of a latent price process governed by a stochastic partial differential equation, we develop estimators of the weekly integrated variance. The inherently infinite dimensional setting introduce several complications that are not relevant in the conventional finite dimensional semimartingale setting, and we spend considerable effort in dealing with these. In particular, we must account for both mean-reversion in prices and semigroup-smoothing in the estimated variance. We provide a detailed decomposition and interpretation of the empirical estimates across three vastly different European generation zones, namely Germany, Norway, and Spain. Our findings indicate that each zone has very different drivers of volatility, and that the impact of generation variables differs considerably. We document that leverage effects appear to be present at first sight, but disappear once we condition on suitable state variables, thereby showing that electricity price volatility does not generally exhibit asymmetric responses to price shocks.",
+  "pdf_url": "https://arxiv.org/pdf/2605.13320",
+  "entry_id": "https://arxiv.org/abs/2605.13320",
+  "published": "2026-05",
+  "categories": [
+    "General Finance (q-fin.GN)"
+  ],
+  "relevance_score": 75,
+  "selection_reason": "研究电力价格波动率的精细结构，虽非期权市场，但核心是波动率建模与估计，与关键词‘volatility’直接匹配。",
+  "search_query": "option volatility curve fitting",
+  "crawled_at": "2026-05-14 13:50:40"
+}

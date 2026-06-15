@@ -1,0 +1,51 @@
+{
+  "2605.12764": {
+    "markdown": "summaries\\2605_12764_20260525_201756.md",
+    "cover_image": "images/2605_12764/cover.png",
+    "backend": "siliconflow",
+    "image_model": "Tongyi-MAI/Z-Image-Turbo",
+    "generated_at": "2026-06-06 15:41:29"
+  },
+  "2605.22203": {
+    "markdown": "summaries\\2605_22203_20260525_201122.md",
+    "cover_image": "images/2605_22203/cover.png",
+    "backend": "siliconflow",
+    "image_model": "Tongyi-MAI/Z-Image-Turbo",
+    "generated_at": "2026-06-06 15:41:39"
+  },
+  "2605.22811": {
+    "markdown": "summaries\\2605_22811_20260525_201700.md",
+    "cover_image": "images/2605_22811/cover.png",
+    "backend": "siliconflow",
+    "image_model": "Tongyi-MAI/Z-Image-Turbo",
+    "generated_at": "2026-06-06 15:41:48"
+  },
+  "2606.13680": {
+    "markdown": "/Users/dengyihan/Downloads/module123 2/module123/demo/runs/20260614-162715-8b8a0d/summaries/2606_13680_20260614_162822.md",
+    "cover_image": "images/2606_13680/cover.png",
+    "backend": "text_only",
+    "image_model": "",
+    "generated_at": "2026-06-15 14:39:36"
+  },
+  "2606.12843": {
+    "markdown": "/Users/dengyihan/Downloads/module123 2/module123/demo/runs/20260614-161344-9eb0e8/summaries/2606_12843_20260614_161428.md",
+    "cover_image": "images/2606_12843/cover.png",
+    "backend": "text_only",
+    "image_model": "",
+    "generated_at": "2026-06-15 14:36:48"
+  },
+  "2606.11770": {
+    "markdown": "/Users/dengyihan/Downloads/module123/demo/runs/20260614-161706-5e537b/summaries/2606_11770_20260614_161804.md",
+    "cover_image": "images/2606_11770/cover.png",
+    "backend": "siliconflow",
+    "image_model": "Tongyi-MAI/Z-Image-Turbo",
+    "generated_at": "2026-06-14 16:18:22"
+  },
+  "2606.14269": {
+    "markdown": "/Users/dengyihan/Downloads/module123 2/module123/demo/runs/20260615-141813-2d029e/summaries/2606_14269_20260615_141904.md",
+    "cover_image": "images/2606_14269/cover.png",
+    "backend": "text_only",
+    "image_model": "",
+    "generated_at": "2026-06-15 14:30:58"
+  }
+}

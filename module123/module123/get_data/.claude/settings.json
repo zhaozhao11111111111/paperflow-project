@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(rm -rf \"d:/学习资料/wenben/get_data/papers\")",
+      "Bash(python paper_crawler.py \"option volatility curve fitting\" --max 10 --top 2 --days 30)",
+      "Bash(curl -s -L \"https://arxiv.org/search/\")",
+      "WebFetch(domain:arxiv.org)",
+      "Bash(curl -s -L \"https://arxiv.org/search/?query=modern+computer+operation+system&searchtype=all&order=-announced_date_first\")",
+      "Read(//tmp/**)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('paper_crawler_core.py', encoding='utf-8'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")",
+      "Bash(timeout 120 python paper_crawler.py \"modern computer operation system\" --top 1)",
+      "Bash(python -c \"from paper_crawler_core import _update_readme; _update_readme\\('papers'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('paper_crawler_core.py', encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('paper_crawler.py', encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")"
+    ]
+  }
+}

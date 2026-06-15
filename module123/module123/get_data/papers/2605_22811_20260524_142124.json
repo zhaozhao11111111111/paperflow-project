@@ -1,0 +1,16 @@
+{
+  "title": "GS-QA: A Benchmark for Geospatial Question Answering",
+  "arxiv_id": "2605.22811",
+  "abstract": "…and angular error. We implemented nine LLM-based geospatial QA baselines using three LLMs (GPT-4o, Claude Sonnet 4.6, and Ministral-3) with combinations of direct prompting, retrieval-augmented generation, and text-to-SQL. Our results show that existing solutions perform reasonab…",
+  "authors": [
+    "Majid Saeedan",
+    "Muhammad Shihab Rashid",
+    "Ahmed Eldawy",
+    "Vagelis Hristidis"
+  ],
+  "entry_id": "https://arxiv.org/abs/2605.22811",
+  "pdf_url": "https://arxiv.org/pdf/2605.22811",
+  "published": "2026-05",
+  "search_query": "retrieval augmented generation",
+  "crawled_at": "2026-05-24 14:21:24"
+}

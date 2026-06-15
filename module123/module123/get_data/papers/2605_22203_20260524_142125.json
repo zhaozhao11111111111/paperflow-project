@@ -1,0 +1,17 @@
+{
+  "title": "Evaluation of Chunking Strategies for Effective Text Embedding in Low-Resource Language on Agricultural Documents",
+  "arxiv_id": "2605.22203",
+  "abstract": "In this study, we compare the performance of four text chunking approaches: Recursive, Khmer-Aware, Sentence-Based, and LLM-Based within a Retrieval-…",
+  "authors": [
+    "Sovandara Chhoun",
+    "Pichdara Po",
+    "Sereiwathna Ros",
+    "Wan-Sup Cho",
+    "Saksonita Khoeurn"
+  ],
+  "entry_id": "https://arxiv.org/abs/2605.22203",
+  "pdf_url": "https://arxiv.org/pdf/2605.22203",
+  "published": "2026-05",
+  "search_query": "retrieval augmented generation",
+  "crawled_at": "2026-05-24 14:21:25"
+}
