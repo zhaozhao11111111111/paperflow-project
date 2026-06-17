@@ -1,0 +1,15 @@
+{
+  "title": "Mitigating Visual Hallucinations in Multimodal Systems through Retrieval-Augmented Reliability-Aware Inference",
+  "arxiv_id": "2606.15782",
+  "abstract": "Multimodal large language models (MLLMs) have demonstrated strong capabilities in vision-language understanding and natural-language response generation. However, these systems can still produce overconfident predictions and hallucination-like outputs, particularly when the visual evidence is weak, ambiguous, or semantically inconsistent. Most existing appro…",
+  "authors": [
+    "Pratheswaran Hariharan",
+    "Haiping Xu",
+    "Donghui Yan"
+  ],
+  "entry_id": "https://arxiv.org/abs/2606.15782",
+  "pdf_url": "https://arxiv.org/pdf/2606.15782",
+  "published": "2026-06",
+  "search_query": "retrieval augmented generation",
+  "crawled_at": "2026-06-16 09:08:14"
+}

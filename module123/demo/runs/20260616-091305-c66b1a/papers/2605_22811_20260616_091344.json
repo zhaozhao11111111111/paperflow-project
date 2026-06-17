@@ -1,0 +1,16 @@
+{
+  "title": "GS-QA: A Benchmark for Geospatial Question Answering",
+  "arxiv_id": "2605.22811",
+  "abstract": "Recent advances in Large Language Models (LLMs) have led to dramatic improvements in question…",
+  "authors": [
+    "Majid Saeedan",
+    "Muhammad Shihab Rashid",
+    "Ahmed Eldawy",
+    "Vagelis Hristidis"
+  ],
+  "entry_id": "https://arxiv.org/abs/2605.22811",
+  "pdf_url": "https://arxiv.org/pdf/2605.22811",
+  "published": "2026-05",
+  "search_query": "geospatial question answering",
+  "crawled_at": "2026-06-16 09:13:44"
+}

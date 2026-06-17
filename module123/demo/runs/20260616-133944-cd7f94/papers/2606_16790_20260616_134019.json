@@ -1,0 +1,17 @@
+{
+  "title": "Decision-Weighted Flow Matching for Contextual Stochastic Optimization",
+  "arxiv_id": "2606.16790",
+  "abstract": "…guarantees. Empirically, we demonstrate the effectiveness of DW-FM on three CVaR-based contextual stochastic optimization benchmarks spanning synthetic portfolio, semi-real financial, and traffic-CVaR tasks, where DW-FM improves downstream regret over standard baselines.",
+  "authors": [
+    "Jize Xie",
+    "Haomiao Wu",
+    "Qiang Chen",
+    "Xiu Su",
+    "Yi Chen"
+  ],
+  "entry_id": "https://arxiv.org/abs/2606.16790",
+  "pdf_url": "https://arxiv.org/pdf/2606.16790",
+  "published": "2026-06",
+  "search_query": "financial",
+  "crawled_at": "2026-06-16 13:40:19"
+}

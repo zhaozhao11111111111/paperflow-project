@@ -19,11 +19,16 @@ DEMO_DIR = ROOT / "demo"
 GET_DATA_DIR = ROOT / "module123" / "get_data"
 MODULE4_DIR = GET_DATA_DIR / "module4"
 RUNS_DIR = DEMO_DIR / "runs"
-SHOWCASE_RUN_IDS = (
-    "20260614-162715-8b8a0d",
-    "20260614-161706-5e537b",
-    "20260614-161344-9eb0e8",
-)
+
+QUERY_ALIASES = {
+    "rag": "retrieval augmented generation",
+    "量化金融": "financial",
+    "金融": "financial",
+    "金融曲线": "financial",
+    "金融机器学习": "financial machine learning",
+    "地理问答": "geospatial question answering",
+    "空间推理": "geospatial question answering",
+}
 
 for path in (GET_DATA_DIR, MODULE4_DIR):
     if str(path) not in sys.path:
@@ -92,12 +97,24 @@ def _versioned_url(path: Path) -> str:
     return f"{_relative_url(path)}?v={path.stat().st_mtime_ns}"
 
 
+def _normalize_query(query: str) -> str:
+    normalized = re.sub(r"\s+", " ", query).strip()
+    return QUERY_ALIASES.get(normalized.lower(), QUERY_ALIASES.get(normalized, normalized))
+
+
+def _file_uri_to_path(uri: str) -> Path:
+    parsed = urlparse(uri)
+    raw_path = unquote(parsed.path)
+    if re.match(r"^/[A-Za-z]:/", raw_path):
+        raw_path = raw_path[1:]
+    return Path(raw_path)
+
+
 def _http_preview_images(preview_path: Path) -> None:
     text = preview_path.read_text(encoding="utf-8")
 
     def replace(match: re.Match[str]) -> str:
-        parsed = urlparse(match.group(0))
-        local = Path(unquote(parsed.path))
+        local = _file_uri_to_path(match.group(0))
         try:
             return _relative_url(local)
         except ValueError:
@@ -147,10 +164,8 @@ def _collect_history() -> list[dict[str, object]]:
     records: list[dict[str, object]] = []
     if not RUNS_DIR.exists():
         return records
-    for run_id in SHOWCASE_RUN_IDS:
-        run_root = RUNS_DIR / run_id
-        if not run_root.is_dir():
-            continue
+    run_dirs = sorted((path for path in RUNS_DIR.iterdir() if path.is_dir()), reverse=True)
+    for run_root in run_dirs:
         markdown_files = sorted(
             path for path in (run_root / "summaries").glob("*.md")
             if path.name != "index.md"
@@ -305,7 +320,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
         except json.JSONDecodeError:
             self._send_json({"error": "请求格式错误"}, HTTPStatus.BAD_REQUEST)
             return
-        query = str(payload.get("query", "")).strip()
+        query = _normalize_query(str(payload.get("query", "")).strip())
         if not query:
             self._send_json({"error": "请输入研究主题"}, HTTPStatus.BAD_REQUEST)
             return

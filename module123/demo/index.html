@@ -318,7 +318,7 @@
           <div class="crop-showcase reveal">
             <figure class="paper-visual figure-visual">
               <div class="visual-image">
-                <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/figure_1.png" alt="从真实论文 PDF 中提取的方法流程图">
+                <img src="runs/20260616-091305-c66b1a/summaries/images/2605_22811/figure_1.png" alt="从真实论文 PDF 中提取的方法流程图">
                 <span>IMAGE BLOCK BOUNDARY</span>
               </div>
               <figcaption>
@@ -352,7 +352,7 @@
 
             <figure class="paper-visual table-visual">
               <div class="visual-image">
-                <img src="runs/20260615-141813-2d029e/summaries/images/2606_14269/table_10.png" alt="从真实论文 PDF 中提取的实验结果表格">
+                <img src="runs/20260616-091305-c66b1a/summaries/images/2605_22811/table_10.png" alt="从真实论文 PDF 中提取的实验结果表格">
                 <span>RULING-LINE CLUSTER</span>
               </div>
               <figcaption>
@@ -486,15 +486,26 @@
             </div>
           </div>
         </div>
+        <div class="module-video-panel page-shell reveal">
+          <div class="module-video-copy">
+            <span>MODULE 04 VIDEO</span>
+            <h3>主题封面生成模块讲解</h3>
+            <p>围绕封面生成流程，展示如何从文章信息提取视觉主题，生成无文字背景，并通过 Pillow 叠加准确标题与关键词。</p>
+          </div>
+          <video controls preload="metadata" playsinline>
+            <source src="assets/cover-module-demo.mp4" type="video/mp4">
+            当前浏览器不支持视频播放。
+          </video>
+        </div>
         <div class="module-page module-page-alt page-shell">
           <div class="module-subheading reveal">
             <span>COVER COMPOSITION</span>
             <h3>生成式背景与确定性文字排版分别处理</h3>
           </div>
           <div class="cover-comparison reveal">
-            <figure><span>BACKGROUND</span><img src="runs/20260614-161344-9eb0e8/summaries/images/2606_12843/cover_bg.png" alt="AI 生成的无文字封面背景"><figcaption>生图服务只负责主题、构图与色彩，不生成标题文字。</figcaption></figure>
+            <figure><span>BACKGROUND</span><img src="runs/20260616-091305-c66b1a/summaries/images/2605_22811/cover_bg.png" alt="AI 生成的无文字封面背景"><figcaption>生图服务只负责主题、构图与色彩，不生成标题文字。</figcaption></figure>
             <div class="composition-rule"><span>COMPOSITION</span><h4>分层合成</h4><div><b>主题识别</b><p>从文章内容判断研究方向和视觉元素。</p></div><div><b>背景生成</b><p>提示词明确禁止文字、标识和水印。</p></div><div><b>文字叠加</b><p>使用本地字体绘制标题、副标题和关键词。</p></div><div><b>版式校验</b><p>控制换行、字号、留白与文字对比度。</p></div></div>
-            <figure><span>FINAL COVER</span><img src="runs/20260614-161344-9eb0e8/summaries/images/2606_12843/cover.png" alt="程序叠加准确文字后的最终封面"><figcaption>程序化排版保证中文标题准确，并输出适配公众号的封面图。</figcaption></figure>
+            <figure><span>FINAL COVER</span><img src="runs/20260616-091305-c66b1a/summaries/images/2605_22811/cover.png" alt="程序叠加准确文字后的最终封面"><figcaption>程序化排版保证中文标题准确，并输出适配公众号的封面图。</figcaption></figure>
           </div>
           <div class="quality-assurance">
             <article><span>CONTROL 01</span><h4>主题一致性</h4><p>主题规则与可选模型分析共同提取视觉线索，使背景与论文研究方向保持一致。</p><strong>输入依据：标题、摘要与关键词</strong></article>
@@ -543,7 +554,7 @@
             <h3>以运行实例为单位管理状态、产物与异常</h3>
           </div>
           <div class="run-observability reveal">
-            <div class="run-directory"><span>RUN / 20260614-161344-9eb0e8</span><strong>独立运行目录</strong><code>papers/</code><code>summaries/</code><code>summaries/images/</code><code>wechat/</code></div>
+            <div class="run-directory"><span>RUN / 20260616-091305-c66b1a</span><strong>独立运行目录</strong><code>papers/</code><code>summaries/</code><code>summaries/images/</code><code>wechat/</code></div>
             <div class="state-timeline"><span>PIPELINE STATE</span><div><b>01</b><p>论文检索与筛选</p><em>done</em></div><div><b>02</b><p>PDF 解析与总结</p><em>done</em></div><div><b>03</b><p>主题封面生成</p><em>done</em></div><div><b>04</b><p>公众号预览生成</p><em>done</em></div></div>
             <div class="result-links"><span>RESULT</span><strong>一次运行形成完整证据链</strong><dl><div><dt>论文数据</dt><dd>paper.json</dd></div><div><dt>文章内容</dt><dd>article.md</dd></div><div><dt>视觉素材</dt><dd>cover.png</dd></div><div><dt>交付结果</dt><dd>preview.html</dd></div></dl></div>
           </div>
@@ -643,7 +654,7 @@
           </div>
           <div class="example-topics">
             <button data-topic="retrieval augmented generation">RAG</button>
-            <button data-topic="option volatility curve fitting">金融曲线</button>
+            <button data-topic="financial">金融方向</button>
             <button data-topic="geospatial question answering">地理问答</button>
           </div>
         </div>
@@ -671,6 +682,29 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="demo-video-section section-space" id="demo-video">
+      <div class="section-heading page-shell reveal">
+        <div>
+          <p class="eyebrow">FULL PROCESS DEMO</p>
+          <h2>从研究主题输入，<br><em>到公众号预览生成。</em></h2>
+        </div>
+        <p>视频展示 PaperFlow 一次完整运行过程，包括论文检索、相关性筛选、Markdown 总结、封面生成和公众号预览输出。</p>
+      </div>
+      <div class="demo-video-wrap page-shell reveal">
+        <div class="video-stage-head">
+          <span>SEARCH</span>
+          <span>SCREEN</span>
+          <span>SUMMARIZE</span>
+          <span>COVER</span>
+          <span>PREVIEW</span>
+        </div>
+        <video controls preload="metadata" playsinline>
+          <source src="assets/paperflow-demo.mp4" type="video/mp4">
+          当前浏览器不支持视频播放。
+        </video>
       </div>
     </section>
 

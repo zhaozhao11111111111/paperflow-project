@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>地理空间问答难在哪？UC Riverside 发布 2800 题基准测试</title>
+</head>
+<body style="margin:0; background:#f5f5f5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px 18px; background: #fff;">
+<h1 style="font-size: 22px; line-height: 1.45; margin: 0 0 16px; font-weight: 700; color: #111;">地理空间问答难在哪？UC Riverside 发布 2800 题基准测试</h1>
+<h3 style="font-size: 15px; line-height: 1.6; margin: 18px 0 8px; font-weight: 700; color: #333;">GS-QA 覆盖 28 种模板，揭示 LLM 在复杂空间推理上的短板</h3>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260616-091305-c66b1a/summaries/images/2605_22811/cover.png" alt="封面" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<blockquote style="margin: 16px 0; padding: 12px 14px; background: #f6f8fb; border-left: 4px solid #2f7df6; color: #444; line-height: 1.8;">当大语言模型遇上地理空间问题，效果到底如何？UC Riverside 团队构建了 GS-QA 基准，包含 2800 个问答对，覆盖方向过滤、多源推理等复杂场景。测试发现，现有模型在简单问题上表现不错，但面对复杂空间谓词和数值输出时，准确率大幅下降。</blockquote>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>论文</strong>：GS-QA: A Benchmark for Geospatial Question Answering</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>作者</strong>：Majid Saeedan, Muhammad Shihab Rashid, Ahmed Eldawy, Vagelis Hristidis</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>来源</strong>：<a href="https://arxiv.org/abs/2605.22811">arXiv:2605.22811</a></p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">为什么要关注这篇论文？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">地理空间问答（GeoQA）的目标是让用户用自然语言查询空间数据，例如“UCR 附近 50 公里内、朝向 LAX 方向的四星级酒店有哪些？”这类问题需要同时理解空间谓词（如“朝向”）、多源数据（如 OpenStreetMap 和 Wikipedia）以及数值计算。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">现有的 GeoQA 基准存在规模小、空间谓词有限、输出类型单一等问题。GS-QA 填补了这一空白，提供了 2800 个问答对，覆盖 28 种模板，并引入方向过滤、多源推理等新挑战。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">GS-QA：一个可扩展的地理空间问答基准</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">GS-QA 基于 OpenStreetMap 和 Wikipedia 数据构建，包含 28 个问题模板，覆盖多种空间对象（点、线、面）、空间谓词（包含、距离、方向、朝向过滤）和输出类型（实体名称、位置、距离、方向、计数、聚合面积/长度）。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">一个关键特点是部分问题需要结合多源信息，例如从 OSM 获取空间数据，从 Wikipedia 获取事实信息。基准还提供了全面的评估方法，结合文本问答指标和地理空间专用指标（如距离误差、角度误差）。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">下图展示了一个典型的地理空间问答示例：</p>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260616-091305-c66b1a/summaries/images/2605_22811/figure_1.png" alt="图1：地理空间问答示例——寻找 UCR 附近 50 公里内、朝向 LAX 方向的四星级酒店" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><em>图1：地理空间问答示例——寻找 UCR 附近 50 公里内、朝向 LAX 方向的四星级酒店</em></p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">实验结果：简单问题尚可，复杂场景大幅下滑</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">研究团队测试了 9 种基线方法，使用 GPT-4o、Claude Sonnet 4.6 和 Ministral-3 三种 LLM，结合直接提示、检索增强生成（RAG）和 Text-to-SQL 策略。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>主要发现：</strong></p>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;">在简单空间谓词和实体名称输出上，现有方法表现合理，F1 分数可达 0.8 以上。</li>
+<li style="margin: 6px 0; line-height: 1.8;">对于复杂空间谓词（如方向过滤）和数值输出（如距离、面积），准确率显著下降，部分模板的 F1 分数低于 0.3。</li>
+<li style="margin: 6px 0; line-height: 1.8;">多源推理任务尤其困难，模型常忽略方向谓词或返回不准确的位置。</li>
+</ul>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">下表对比了 GS-QA 与现有 GeoQA 基准在数据来源、问题规模、空间概念和输出类型上的差异：</p>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260616-091305-c66b1a/summaries/images/2605_22811/table_1.png" alt="表1：GS-QA 与现有 GeoQA 基准对比" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><em>表1：GS-QA 与现有 GeoQA 基准对比</em></p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">划重点：地理空间问答仍是开放挑战</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">GS-QA 的测试结果揭示了当前 LLM 在地理空间推理上的三大短板：</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">1. <strong>空间谓词理解不足</strong>：模型常忽略方向过滤等复杂谓词，返回不相关结果。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">2. <strong>数值输出精度低</strong>：对于距离、面积等数值型答案，相对误差较大。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">3. <strong>多源推理困难</strong>：结合空间和事实信息的问答，准确率明显低于单源任务。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">研究团队已公开 GS-QA 基准和评估代码，鼓励社区在此基础上开发更强大的地理空间问答系统。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">写在最后</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">GS-QA 为地理空间问答研究提供了一个系统化的评估平台。如果你正在开发或评估 LLM 在空间数据上的应用，这个基准值得一试。论文和代码已公开，欢迎前往 arXiv 查看原文（arXiv: 2605.22811）。</p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">📄 <strong>阅读原文</strong>：<a href="https://arxiv.org/pdf/2605.22811">PDF 下载</a> | <a href="https://arxiv.org/abs/2605.22811">arXiv 页面</a></p>
+  </main>
+</body>
+</html>
