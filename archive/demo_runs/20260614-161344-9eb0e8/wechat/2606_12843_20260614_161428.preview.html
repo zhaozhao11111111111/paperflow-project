@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A股预测中行为信号碾压估值指标？XGBoost+SHAP给出答案</title>
+</head>
+<body style="margin:0; background:#f5f5f5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px 18px; background: #fff;">
+<h1 style="font-size: 22px; line-height: 1.45; margin: 0 0 16px; font-weight: 700; color: #111;">A股预测中行为信号碾压估值指标？XGBoost+SHAP给出答案</h1>
+<h3 style="font-size: 15px; line-height: 1.6; margin: 18px 0 8px; font-weight: 700; color: #333;">基于3632只股票10年数据，多空组合年化夏普2.23</h3>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260614-161344-9eb0e8/summaries/images/2606_12843/cover.png" alt="封面" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<blockquote style="margin: 16px 0; padding: 12px 14px; background: #f6f8fb; border-left: 4px solid #2f7df6; color: #444; line-height: 1.8;">在A股这个散户主导的市场，哪些指标真正能预测收益？估值指标还是交易行为？一篇来自埃默里大学、佐治亚理工、宾大和纽大的研究，用XGBoost+TreeSHAP对3632只股票做了10年回测，发现行为信号贡献了58.2%的预测力，估值指标仅占10.7%。</blockquote>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>论文</strong>：Interpretable Factor Decomposition for Decision Intelligence in Large-Scale Financial Markets: Evidence from China's A-Share Market</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>作者</strong>：Xiao Han, Yao Xiao, Zhen Zhang, Moxuan Zheng</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>来源</strong>：<a href="https://arxiv.org/abs/2606.12843">arXiv:2606.12843</a></p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">为什么需要可解释的因子分解？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">金融领域有超过300个被记录的异象因子，但哪个因子真正起作用、作用有多大，一直是个黑箱问题。传统的线性因子模型（如Fama-French、Carhart四因子）假设因子间独立且线性，但真实市场中的因子往往相互替代或协同。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">这篇论文的目标很直接：用可解释的机器学习方法，把股票截面收益的可预测性分解成可审计的因子贡献，让每个因子的“功劳”透明可见。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">核心方法：XGBoost + TreeSHAP + 消融分析</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">研究采用了一个三步骤的决策智能流水线：</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>第一步：预测模型</strong></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">使用XGBoost（200棵树，深度4，学习率0.05）对3632只A股进行月度收益预测。任务很简单：预测某只股票下月收益是否高于全市场所有股票的中位数。训练窗口为60个月，滚动向前测试55个月。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>第二步：SHAP归因</strong></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">用TreeSHAP对每个特征计算Shapley值，得到每个因子对预测的贡献度。SHAP满足一致性、准确性等公理性质，保证分解不是启发式的。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>第三步：消融分析交叉验证</strong></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">通过逐一移除特征组并重新训练模型，观察AUC的变化，与SHAP排名进行对比。有趣的是，两种方法在某些特征上出现分歧——这恰恰揭示了特征之间的可替代性结构，这是单一方法无法看到的。</p>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260614-161344-9eb0e8/summaries/images/2606_12843/figure_1.png" alt="图1：机器学习多空组合与基准组合的累计收益对比" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><em>图1：机器学习多空组合与基准组合的累计收益对比</em></p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">实验结果有多强？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>预测能力</strong>：XGBoost在55个月样本外测试中，平均AUC达到0.547，多空组合（前20% vs 后20%）月均收益+2.38%（Newey-West t=5.94，年化夏普2.23）。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>因子调整后依然显著</strong>：经Carhart四因子模型调整后，超额收益仍有+2.31%/月（t=7.48），说明ML模型捕捉到了传统因子无法解释的alpha。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>因子贡献排名</strong>：在55个行业组中，行为信号（换手率、动量、波动率）平均贡献了58.2%的预测力，而估值指标（P/E、P/B、P/S、P/CF）仅占10.7%。基本面指标（ROE、净利润率）和市值因子贡献分别为17.4%和13.7%。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>消融分析揭示替代性</strong>：移除换手率导致AUC大幅下降，说明它是“承重墙”特征；而移除市值因子后模型性能几乎不变，因为它可以被其他特征（如动量）替代。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">划重点</h2>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;"><strong>行为信号主导A股收益预测</strong>：换手率和动量等交易行为指标，贡献了近六成的预测力，远超传统估值指标。</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>ML模型alpha稳健</strong>：即使调整了Carhart四因子，月均超额收益仍达2.31%，且统计显著。</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>SHAP + 消融分析互补</strong>：两者结合能识别特征的“承重”与“替代”角色，为因子选择提供更全面的视角。</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>数据透明可复现</strong>：研究使用公开的baostock数据，代码和流程设计清晰，便于其他研究者验证和扩展。</li>
+</ul>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">写在最后</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">这篇论文的价值不仅在于验证了行为信号在中国市场的有效性，更在于提供了一个可解释、可审计的因子分解框架。对于量化研究者来说，SHAP+消融分析的组合或许能帮你从“因子动物园”中找出真正有用的信号。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">论文已上传arXiv（2606.12843），感兴趣的读者可以查看完整实验细节和代码链接。</p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">📄 <strong>阅读原文</strong>：<a href="https://arxiv.org/pdf/2606.12843">PDF 下载</a> | <a href="https://arxiv.org/abs/2606.12843">arXiv 页面</a></p>
+  </main>
+</body>
+</html>

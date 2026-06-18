@@ -1,0 +1,16 @@
+{
+  "title": "Interpretable Factor Decomposition for Decision Intelligence in Large-Scale Financial Markets: Evidence from China's A-Share Market",
+  "arxiv_id": "2606.12843",
+  "abstract": "We present an interpretable machine learning pipeline to decompose Cross-Sectional Equity Return Predictability into auditable factor contribution. We apply an XGBoost model with TreeSHAP attribution and conduct stress testing on 3632 Chinese A-share stocks from 2009 until 2019. Using 60-month, rolling windows over 55…",
+  "authors": [
+    "Xiao Han",
+    "Yao Xiao",
+    "Zhen Zhang",
+    "Moxuan Zheng"
+  ],
+  "entry_id": "https://arxiv.org/abs/2606.12843",
+  "pdf_url": "https://arxiv.org/pdf/2606.12843",
+  "published": "2026-06",
+  "search_query": "financial machine learning",
+  "crawled_at": "2026-06-14 16:14:09"
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG推理新范式：类比学习+强化微调，AIME提升7.1分</title>
+</head>
+<body style="margin:0; background:#f5f5f5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px 18px; background: #fff;">
+<h1 style="font-size: 22px; line-height: 1.45; margin: 0 0 16px; font-weight: 700; color: #111;">RAG推理新范式：类比学习+强化微调，AIME提升7.1分</h1>
+<h3 style="font-size: 15px; line-height: 1.6; margin: 18px 0 8px; font-weight: 700; color: #333;">RA-RFT：让模型学会“找相似例题”来推理</h3>
+<p style="margin: 18px 0; text-align: center;"><img src="/demo/runs/20260614-160803-0337f6/summaries/images/2606_13680/cover.png" alt="封面" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<blockquote style="margin: 16px 0; padding: 12px 14px; background: #f6f8fb; border-left: 4px solid #2f7df6; color: #444; line-height: 1.8;">传统RAG检索只找语义相似的文本，但数学推理题需要的是解题思路的相似。这篇论文提出RA-RFT，通过“黄金相关性蒸馏”训练检索器，再用强化微调让模型学会类比推理，在AIME 2025上比GRPO提升7.1个点。</blockquote>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>论文</strong>：Learning to Reason by Analogy via Retrieval-Augmented Reinforcement Fine-Tuning</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>作者</strong>：Zilin Xiao, Qi Ma, Chun-cheng Jason Chen, Xintao Chen, Avinash Atreya 等</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>来源</strong>：<a href="https://arxiv.org/abs/2606.13680">arXiv:2606.13680</a></p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">为什么需要“推理感知”的检索？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">现有的RAG系统大多依赖词法或语义相似度来检索文档，这在问答、摘要等任务上表现不错。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">但到了复杂推理场景，问题就来了：两个数学题表面相似（比如都考“概率”），解题路径可能完全不同；而一个看似无关的问题，反而可能共享相同的推理结构。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">简单来说，<strong>语义相似 ≠ 推理相似</strong>。作者认为，检索应该服务于推理，而不是文本匹配。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">核心方法：RA-RFT如何工作？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">RA-RFT是一个两阶段的后训练框架：</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">1. <strong>黄金相关性蒸馏</strong>：先用一个强大的推理模型（如DeepSeek-R1）对每个问题生成多个推理轨迹，然后根据这些轨迹是否导致正确答案，来标注哪些检索到的样例是“有用的”。训练一个检索器，让它学会按<strong>推理收益</strong>排序，而非语义重叠。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">2. <strong>强化微调</strong>：在推理时，检索器为每个问题返回若干类比样例（包括问题+完整推理过程）。然后使用强化微调方法（如GRPO）来训练策略模型，让它学会从这些示范中提取推理模式，并在可验证的奖励信号下优化。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">值得注意的是，RA-RFT检索到的样例往往提供<strong>互补的解题思路</strong>，而不是重复信息，这为模型提供了多样化的推理脚手架。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">实验结果有多强？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">在多个高难度数学推理基准上，RA-RFT一致优于标准强化微调方法。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">以AIME 2025为例（32次采样平均准确率）：</p>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;"><strong>Qwen3-1.7B</strong>：RA-RFT比GRPO提升 <strong>7.1个点</strong></li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>Qwen3-4B</strong>：提升 <strong>2.8个点</strong></li>
+</ul>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">在MATH-500和AMC 2023上也有类似幅度的提升。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">作者还分析了检索样例的多样性，发现推理感知的检索能挖掘出不同解题策略，这对模型泛化能力至关重要。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">划重点</h2>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;"><strong>核心洞察</strong>：语义检索不适合推理任务，需要按“推理相关性”来检索</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>方法亮点</strong>：黄金相关性蒸馏 + 强化微调，两者结合让模型学会类比推理</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>性能提升</strong>：在AIME 2025上最高提升7.1个点，且与奖励设计、训练课程等改进正交</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>实用价值</strong>：RA-RFT可以作为一个通用后训练框架，适用于任何需要推理的RAG场景</li>
+</ul>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">写在最后</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">RA-RFT告诉我们，RAG在推理任务上的潜力远未被挖掘。当检索不再只是“找相似文本”，而是“找相似解法”，模型才能真正学会举一反三。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">论文已公开在arXiv，代码和模型即将开源。感兴趣的同学可以去看看原文，尤其是附录中对检索多样性分析的实验，很有意思。</p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">📄 <strong>阅读原文</strong>：<a href="https://arxiv.org/pdf/2606.13680">PDF 下载</a> | <a href="https://arxiv.org/abs/2606.13680">arXiv 页面</a></p>
+  </main>
+</body>
+</html>

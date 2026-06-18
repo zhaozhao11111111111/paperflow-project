@@ -1,0 +1,14 @@
+{
+  "title": "ScoreGate: Adaptive Chunk Selection for Retrieval-Augmented Generation via Dual-Score Statistical Fusion",
+  "arxiv_id": "2606.14269",
+  "abstract": "Fixed-cardinality retrieval injects a constant top-K chunks into the…",
+  "authors": [
+    "Karamvir Singh",
+    "Arvind Jain"
+  ],
+  "entry_id": "https://arxiv.org/abs/2606.14269",
+  "pdf_url": "https://arxiv.org/pdf/2606.14269",
+  "published": "2026-06",
+  "search_query": "retrieval augmented generation",
+  "crawled_at": "2026-06-15 14:18:46"
+}

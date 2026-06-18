@@ -1,0 +1,19 @@
+{
+  "title": "SVoT: State-aware Visualization-of-Thought for Spatial Reasoning via Reinforcement Learning",
+  "arxiv_id": "2606.11770",
+  "abstract": "Spatial reasoning remains a challenge for Multimodal Large Language Models (MLLMs), as it requires reliable multi-hop inference over both intermediate states and state transitions. Current studies often leave intermediate states unverified and treat state transitions as implicit processes, which limits reliability in multi-hop spatial reasoning. To address this, we propose State-aware Visualization-of-Thought (SVoT), a reinforcement learning framework that generates interleaved, verifiable intermediate states and visualizations. SVoT integrates transition reasoning chains into the generation processes, enabling the model to verify action preconditions and effects through interleaved textual and visual reasoning. We train SVoT via Group Relative Policy Optimization (GRPO), instantiating verification through reward design and evaluating the efficacy of different fine-grained rewards. As existing benchmarks reduce state transitions to single-variable updates, substantially simplifying the problems, we establish five domains by extending classical environments and introducing two novel domains, Pacman and Gather, that require multi-object interactions and numerical reasoning. These domains support systematic evaluation of multi-hop spatial reasoning with quantitative verification of generated intermediate states and transition reasoning. SVoT with transition-aware supervision achieves state-of-the-art performance across the introduced domains, yielding up to a 65% absolute accuracy gain on out-of-distribution test sets.",
+  "authors": [
+    "Chao Lei",
+    "Yanbei Jiang",
+    "Markus Hiller",
+    "Zhijian Zhou",
+    "Xunye Tian",
+    "Krista A. Ehinger",
+    "Nir Lipovetzky"
+  ],
+  "entry_id": "https://arxiv.org/abs/2606.11770",
+  "pdf_url": "https://arxiv.org/pdf/2606.11770",
+  "published": "2026-06",
+  "search_query": "spatial reasoning large language models",
+  "crawled_at": "2026-06-14 16:17:42"
+}

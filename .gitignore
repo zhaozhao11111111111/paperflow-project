@@ -1,0 +1,17 @@
+.DS_Store
+__MACOSX/
+__pycache__/
+*.py[cod]
+.venv/
+*.log
+*.aux
+*.out
+*.toc
+
+# Runtime outputs
+module123/demo/runs/*/
+!module123/demo/runs/20260616-091305-c66b1a/
+
+# Local secrets
+.env
+module123/get_data/module4/.env

@@ -1,0 +1,6 @@
+openai
+requests
+selenium
+webdriver-manager
+pymupdf
+mcp

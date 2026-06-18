@@ -16,7 +16,7 @@ from urllib.parse import unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = ROOT / "demo"
-GET_DATA_DIR = ROOT / "module123" / "get_data"
+GET_DATA_DIR = ROOT / "get_data"
 MODULE4_DIR = GET_DATA_DIR / "module4"
 RUNS_DIR = DEMO_DIR / "runs"
 
@@ -303,7 +303,7 @@ class DemoHandler(SimpleHTTPRequestHandler):
         allowed = (
             path == "/demo"
             or path.startswith("/demo/")
-            or path.startswith("/module123/get_data/summaries/images/")
+            or path.startswith("/get_data/summaries/images/")
         )
         if not allowed:
             self.send_error(HTTPStatus.NOT_FOUND)

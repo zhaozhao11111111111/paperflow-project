@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>低资源语言RAG怎么切块？四种策略对比，递归法胜出</title>
+</head>
+<body style="margin:0; background:#f5f5f5;">
+  <main style="max-width: 680px; margin: 0 auto; padding: 24px 18px; background: #fff;">
+<h1 style="font-size: 22px; line-height: 1.45; margin: 0 0 16px; font-weight: 700; color: #111;">低资源语言RAG怎么切块？四种策略对比，递归法胜出</h1>
+<h3 style="font-size: 15px; line-height: 1.6; margin: 18px 0 8px; font-weight: 700; color: #333;">高棉语农业文档实验：字符级递归分块效果最佳</h3>
+<p style="margin: 18px 0; text-align: center;"><img src="file:///C:/Users/86180/Desktop/%E5%A4%A7%E4%B8%89/%E5%A4%A7%E6%A8%A1%E5%9E%8B/module123/get_data/summaries/images/2605_22203/cover.png" alt="封面" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<blockquote style="margin: 16px 0; padding: 12px 14px; background: #f6f8fb; border-left: 4px solid #2f7df6; color: #444; line-height: 1.8;">在RAG系统中，文档分块（Chunking）是影响检索质量的关键一步。但对于高棉语这类无词边界、形态复杂的低资源语言，哪种分块策略最有效？这篇来自忠北国立大学的研究，系统对比了四种方法，给出了明确答案。</blockquote>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>论文</strong>：Evaluation of Chunking Strategies for Effective Text Embedding in Low-Resource Language on Agricultural Documents</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>作者</strong>：Sovandara Chhoun, Pichdara Po, Sereiwathna Ros, Wan-Sup Cho, Saksonita Khoeurn</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><strong>来源</strong>：<a href="https://arxiv.org/abs/2605.22203">arXiv:2605.22203</a></p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">为什么要关注这篇论文？</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">RAG（检索增强生成）已经成为大模型落地的重要范式，但大多数研究集中在高资源语言（如英语）上。对于高棉语（柬埔寨官方语言）这类<strong>无词边界、标点不规则、NLP资源稀缺</strong>的语言，传统分块方法往往失效。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">农业文档包含大量多步骤操作流程和专业术语，对语义连续性要求极高。<strong>分块太粗，语义模糊；分块太细，上下文断裂</strong>。这篇论文正是针对这一痛点，系统评估了四种分块策略在低资源语言RAG中的表现。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">核心方法：四种分块策略 + 统一评估流程</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">研究采用了<strong>端到端的分块评估流程</strong>（图1），具体步骤为：文档分块 → BGE-M3多语言嵌入模型编码 → FAISS向量检索 → 基于18个问答对的5折交叉验证评估。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">四种分块策略分别是：</p>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;"><strong>Recursive（递归分块）</strong>：基于字符数固定切分，带重叠窗口</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>Khmer-Aware（高棉语感知分块）</strong>：利用高棉语分词工具进行语言感知切分</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>Sentence-Based（基于句子分块）</strong>：按句子边界切分</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>LLM-Based（大模型分块）</strong>：使用大模型进行语义分块</li>
+</ul>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">评估指标包括：平均检索分数（L2距离）、答案相关性（余弦相似度）、高棉语覆盖率（Khmer Coverage）和高棉语交并比（Khmer IoU）。</p>
+<p style="margin: 18px 0; text-align: center;"><img src="file:///C:/Users/86180/Desktop/%E5%A4%A7%E4%B8%89/%E5%A4%A7%E6%A8%A1%E5%9E%8B/module123/get_data/summaries/images/2605_22203/figure_1.png" alt="图1：端到端分块评估流程" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><em>图1：端到端分块评估流程</em></p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">实验结果有多强？递归法全面领先</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">实验结果显示，<strong>字符级递归分块（chunk size=300字符）</strong> 在所有指标上表现最优：</p>
+<ul style="padding-left: 1.2em; margin: 10px 0 16px; color: #222;">
+<li style="margin: 6px 0; line-height: 1.8;"><strong>最低L2距离</strong>：0.4295 ± 0.0461（检索最准确）</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>最高答案相关性</strong>：0.8663 ± 0.0199</li>
+<li style="margin: 6px 0; line-height: 1.8;"><strong>最高高棉语IoU</strong>：0.6441 ± 0.0347</li>
+</ul>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">配对t检验表明，递归法在L2距离上<strong>显著优于</strong>基于句子分块（p=0.0121）。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">表2展示了四种策略的完整对比数据，递归法在检索精度和语义保持上均占优势。值得注意的是，LLM-Based分块虽然语义理解能力强，但计算成本高且在高棉语上并未超越简单的字符级递归法。</p>
+<p style="margin: 18px 0; text-align: center;"><img src="file:///C:/Users/86180/Desktop/%E5%A4%A7%E4%B8%89/%E5%A4%A7%E6%A8%A1%E5%9E%8B/module123/get_data/summaries/images/2605_22203/table_2.png" alt="表2：四种分块策略在高棉语农业文档上的性能对比" style="max-width: 100%; height: auto; border-radius: 4px;"/></p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;"><em>表2：四种分块策略在高棉语农业文档上的性能对比</em></p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">划重点：给低资源语言RAG的启示</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">1. <strong>分块粒度比花哨方法更重要</strong>：对于形态复杂的低资源语言，简单的字符级递归分块（300字符）反而比语言感知或大模型分块更有效。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">2. <strong>语义连续性优先</strong>：固定窗口+重叠策略能更好地保留多步骤农业文档的上下文关联。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">3. <strong>计算效率优势</strong>：递归分块无需额外语言工具或大模型推理，部署成本低。</p>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">4. <strong>统计显著性验证</strong>：研究采用5折交叉验证和配对t检验，结论可靠。</p>
+<h2 style="font-size: 18px; line-height: 1.55; margin: 28px 0 12px; padding-left: 10px; border-left: 4px solid #2f7df6; font-weight: 700; color: #111;">写在最后</h2>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">这项研究为低资源语言RAG系统的分块策略选择提供了实证依据。对于高棉语、缅甸语、老挝语等类似语言，<strong>优先尝试字符级递归分块</strong>可能是更务实的选择。论文已公开在arXiv，感兴趣的读者可以查阅完整实验设置和代码。</p>
+<hr style="border: 0; border-top: 1px solid #e8e8e8; margin: 24px 0;"/>
+<p style="font-size: 15px; line-height: 1.9; margin: 12px 0; color: #222;">📄 <strong>阅读原文</strong>：<a href="https://arxiv.org/pdf/2605.22203">PDF 下载</a> | <a href="https://arxiv.org/abs/2605.22203">arXiv 页面</a></p>
+  </main>
+</body>
+</html>
